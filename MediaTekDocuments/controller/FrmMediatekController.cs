@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using MediaTekDocuments.model;
 using MediaTekDocuments.dal;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace MediaTekDocuments.controller
 {
@@ -21,7 +23,7 @@ namespace MediaTekDocuments.controller
         {
             access = Access.GetInstance();
         }
-
+        #region GET
         /// <summary>
         /// getter sur la liste des genres
         /// </summary>
@@ -82,11 +84,28 @@ namespace MediaTekDocuments.controller
         /// </summary>
         /// <param name="idDocuement">id de la revue concernée</param>
         /// <returns>Liste d'objets Exemplaire</returns>
-        public List<Exemplaire> GetExemplairesRevue(string idDocuement)
+        public List<Exemplaire> GetExemplairesRevue(string idDocument)
         {
-            return access.GetExemplairesRevue(idDocuement);
+            return access.GetExemplairesRevue(idDocument);
         }
+        #endregion
 
+        #region DELETE
+        public bool DeleteLivre(Livre livre)
+        {
+            return access.DeleteLivre(livre);
+        }
+        public bool DeleteRevue(Revue revue)
+        {
+            return access.DeleteRevue(revue);
+        }
+        public bool DeleteDVD(Dvd dvd)
+        {
+            return access.DeleteDvd(dvd);
+        }
+        #endregion
+
+        #region POST
         /// <summary>
         /// Crée un exemplaire d'une revue dans la bdd
         /// </summary>
@@ -96,5 +115,65 @@ namespace MediaTekDocuments.controller
         {
             return access.CreerExemplaire(exemplaire);
         }
+
+        public bool AddLivre(Livre livre)
+        {
+            return access.AddLivre(livre);
+        }
+        public bool AddRevue(Revue revue)
+        {
+            return access.AddRevue(revue);
+        }
+        public bool AddDvd(Dvd dvd)
+        {
+            return access.AddDVD(dvd);
+        }
+        #endregion
+
+        #region PUT
+        public bool EditLivre(Livre livre)
+        {
+            return access.EditLivre(livre);
+        }
+        public bool EditDvd(Dvd dvd)
+        {
+            return access.EditDvd(dvd);
+        }
+        public bool EditRevue(Revue revue)
+        {
+            return access.EditRevue(revue);
+        }
+        #endregion
+
+        public string GenerateNewLivresId()
+        {
+            var maxId = GetAllLivres()
+                .Select(l => int.TryParse(l.Id, out int id) ? id : 0)
+                .DefaultIfEmpty(0)
+                .Max();
+
+            return (maxId + 1).ToString("D4");
+        }
+
+        public string GenerateNewRevuesId()
+        {
+            var maxId = GetAllRevues()
+                .Select(r => int.TryParse(r.Id, out int id) ? id : 0)
+                .DefaultIfEmpty(0)
+                .Max();
+        
+            return (maxId + 1).ToString("D4");
+        }
+
+
+        public string GenerateNewDvdId()
+        {
+            var maxId = GetAllDvd()
+                .Select(d => int.TryParse(d.Id, out int id) ? id : 0)
+                .DefaultIfEmpty(0)
+                .Max();
+            return (maxId + 1).ToString("D4");
+        }
+
     }
 }

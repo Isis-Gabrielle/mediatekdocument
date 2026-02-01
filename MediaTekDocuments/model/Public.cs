@@ -1,5 +1,4 @@
-﻿
-namespace MediaTekDocuments.model
+﻿namespace MediaTekDocuments.model
 {
     /// <summary>
     /// Classe métier Public (public concerné par le document) hérite de Categorie
@@ -9,6 +8,5 @@ namespace MediaTekDocuments.model
         public Public(string id, string libelle) : base(id, libelle)
         {
         }
-
     }
 }

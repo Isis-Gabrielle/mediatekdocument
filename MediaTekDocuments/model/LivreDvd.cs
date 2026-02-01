@@ -1,5 +1,4 @@
-﻿
-namespace MediaTekDocuments.model
+﻿namespace MediaTekDocuments.model
 {
     /// <summary>
     /// Classe métier LivreDvd hérite de Document
@@ -11,6 +10,5 @@ namespace MediaTekDocuments.model
             : base(id, titre, image, idGenre, genre, idPublic, lePublic, idRayon, rayon)
         {
         }
-
     }
 }

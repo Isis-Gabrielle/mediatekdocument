@@ -1,5 +1,4 @@
-﻿
-namespace MediaTekDocuments.model
+﻿namespace MediaTekDocuments.model
 {
     /// <summary>
     /// Classe métier Etat (état d'usure d'un document)
@@ -14,6 +13,5 @@ namespace MediaTekDocuments.model
             this.Id = id;
             this.Libelle = libelle;
         }
-
     }
 }

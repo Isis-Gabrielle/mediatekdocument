@@ -1,5 +1,4 @@
-﻿
-namespace MediaTekDocuments.model
+﻿namespace MediaTekDocuments.model
 {
     /// <summary>
     /// Classe métier Revue hérite de Document : contient des propriétés spécifiques aux revues
@@ -17,6 +16,5 @@ namespace MediaTekDocuments.model
             Periodicite = periodicite;
             DelaiMiseADispo = delaiMiseADispo;
         }
-
     }
 }
