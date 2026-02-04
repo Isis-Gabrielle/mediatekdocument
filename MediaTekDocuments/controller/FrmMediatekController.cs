@@ -78,6 +78,11 @@ namespace MediaTekDocuments.controller
             return access.GetAllPublics();
         }
 
+        public List<Commande> GetAllCommandes()
+        {
+            return access.GetAllCommandes();
+        }
+
 
         /// <summary>
         /// récupère les exemplaires d'une revue
@@ -88,12 +93,26 @@ namespace MediaTekDocuments.controller
         {
             return access.GetExemplairesRevue(idDocument);
         }
+
+        public List<CommandeDocument> GetCommandesDocument(string idDocument)
+        {
+            return access.GetCommandesDocument(idDocument);
+        }
+
+        public List<Suivi> GetAllSuivi()
+        {
+            return access.GetAllSuivi();
+        }
         #endregion
 
         #region DELETE
         public bool DeleteLivre(Livre livre)
         {
             return access.DeleteLivre(livre);
+        }
+        public bool DeleteCommande(CommandeDocument commande)
+        {
+            return access.DeleteCommande(commande);
         }
         public bool DeleteRevue(Revue revue)
         {
@@ -128,6 +147,10 @@ namespace MediaTekDocuments.controller
         {
             return access.AddDVD(dvd);
         }
+        public bool CreerCommandeDocument(CommandeDocument commandedocument)
+        {
+            return access.CreerCommandeDocument(commandedocument);
+        }
         #endregion
 
         #region PUT
@@ -142,6 +165,10 @@ namespace MediaTekDocuments.controller
         public bool EditRevue(Revue revue)
         {
             return access.EditRevue(revue);
+        }
+        public bool EditSuiviCommande(string idCommande, string idSuivi)
+        {
+            return access.EditSuiviCommande(idCommande, idSuivi);
         }
         #endregion
 
@@ -169,6 +196,15 @@ namespace MediaTekDocuments.controller
         public string GenerateNewDvdId()
         {
             var maxId = GetAllDvd()
+                .Select(d => int.TryParse(d.Id, out int id) ? id : 0)
+                .DefaultIfEmpty(0)
+                .Max();
+            return (maxId + 1).ToString("D4");
+        }
+        public string GenerateNewCommandeId()
+        {
+            var toutesLesCommandes = access.GetAllCommandes();
+            var maxId = toutesLesCommandes
                 .Select(d => int.TryParse(d.Id, out int id) ? id : 0)
                 .DefaultIfEmpty(0)
                 .Max();

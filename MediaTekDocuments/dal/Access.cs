@@ -140,6 +140,12 @@ namespace MediaTekDocuments.dal
             return lesRevues;
         }
 
+        public List<Commande> GetAllCommandes()
+        {
+            List<Commande> lesCommandes = TraitementRecup<Commande>(GET, "commande", null);
+            return lesCommandes;
+        }
+
         /// <summary>
         /// Retourne les exemplaires d'une revue
         /// </summary>
@@ -151,6 +157,20 @@ namespace MediaTekDocuments.dal
             List<Exemplaire> lesExemplaires = TraitementRecup<Exemplaire>(GET, "exemplaire/" + jsonIdDocument, null);
             return lesExemplaires;
         }
+
+        public List<CommandeDocument> GetCommandesDocument(string idDocument)
+        {
+            String jsonIdDocument = convertToJson("id", idDocument);
+            List<CommandeDocument> lesCommandes = TraitementRecup<CommandeDocument>(GET, "commande/" + jsonIdDocument, null);
+            return lesCommandes;
+        }
+
+        public List<Suivi> GetAllSuivi()
+        {
+            IEnumerable<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
+            return new List<Suivi>(lesSuivis);
+        }
+
 
         #endregion GET
 
@@ -182,7 +202,20 @@ namespace MediaTekDocuments.dal
                 return false;
             }
         }
+        public bool DeleteCommande(CommandeDocument commande)
+        {
+            try
+            {
+                string jsonId = convertToJson("id", commande.Id);
 
+                return TraitementRecup<CommandeDocument>(DELETE, "commande/" + jsonId, null) != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur DeleteCommandeDocument : " + ex.Message);
+                return false;
+            }
+        }
 
         #endregion DELETE
 
@@ -234,6 +267,30 @@ namespace MediaTekDocuments.dal
                 return false;
             }
         }
+
+        public bool CreerCommandeDocument(CommandeDocument commande)
+        {
+            try
+            {
+                var commandeData = new
+                {
+                    id = commande.Id,
+                    dateCommande = commande.DateCommande,
+                    montant = commande.Montant,
+                    nbExemplaire = commande.NbExemplaire,
+                    idLivreDvd = commande.IdLivreDvd
+                };
+
+                string json = JsonConvert.SerializeObject(commandeData, new CustomDateTimeConverter());
+                return TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + json) != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur CreerCommandeDocument : " + ex.Message);
+                return false;
+            }
+        }
+
 
         public bool AddRevue(Revue revue)
         {
@@ -361,7 +418,25 @@ namespace MediaTekDocuments.dal
             }
             catch { return false; }
         }
+        public bool EditSuiviCommande(string idCommande, string idSuivi)
+        {
+            try
+            {
+                var suiviData = new
+                {
+                    idsuivi = idSuivi
+                };
 
+                string json = JsonConvert.SerializeObject(suiviData);
+
+                return TraitementRecup<CommandeDocument>(PUT, "commandedocument/" + idCommande, "champs=" + json) != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur EditSuiviCommande : " + ex.Message);
+                return false;
+            }
+        }
         #endregion
 
 

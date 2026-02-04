@@ -232,6 +232,7 @@ namespace MediaTekDocuments.view
                 RemplirLivresListeComplete();
             }
         }
+
         private void btnLivresSaveDocument_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txbLivresTitre.Text) || cbxLivresGenreAddEdit.SelectedItem == null ||
@@ -471,9 +472,9 @@ namespace MediaTekDocuments.view
         /// Remplit le dategrid avec la liste reçue en paramètre
         /// </summary>
         /// <param name="dvd">liste de dvd</param>
-        private void RemplirLivresListe(List<Livre> dvd)
+        private void RemplirLivresListe(List<Livre> livre)
         {
-            bdgLivresListe.DataSource = dvd;
+            bdgLivresListe.DataSource = livre;
             dgvLivresListe.DataSource = bdgLivresListe;
             dgvLivresListe.Columns["isbn"].Visible = false;
             dgvLivresListe.Columns["idRayon"].Visible = false;
@@ -1047,7 +1048,6 @@ namespace MediaTekDocuments.view
             }
             else
             {
-                // si la zone de saisie est vide et aucun élément combo sélectionné, réaffichage de la liste complète
                 if (cbxDvdGenres.SelectedIndex < 0 && cbxDvdPublics.SelectedIndex < 0 && cbxDvdRayons.SelectedIndex < 0
                     && txbDvdNumRecherche.Text.Equals(""))
                 {
@@ -1836,5 +1836,21 @@ namespace MediaTekDocuments.view
             AccesReceptionExemplaireGroupBox(false);
         }
         #endregion Onglet Parutions
+
+        private void btnCommandesLivres_Click(object sender, EventArgs e)
+        {
+            string idLivre = (bdgLivresListe.Current != null) ? ((Livre)bdgLivresListe.Current).Id : null;
+
+            FrmMediatekCommande frm = new FrmMediatekCommande(idLivre, true);
+            frm.ShowDialog();
+        }
+
+        private void btnCommandesDvd_Click(object sender, EventArgs e)
+        {
+            string idDvd = (bdgDvdListe.Current != null) ? ((Dvd)bdgDvdListe.Current).Id : null;
+
+            FrmMediatekCommande frm = new FrmMediatekCommande(idDvd, false);
+            frm.ShowDialog();
+        }
     }
 }
