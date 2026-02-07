@@ -207,6 +207,7 @@ namespace MediaTekDocuments.view
             this.label53 = new System.Windows.Forms.Label();
             this.label54 = new System.Windows.Forms.Label();
             this.btnReceptionRechercher = new System.Windows.Forms.Button();
+            this.btnCommandesRevues = new System.Windows.Forms.Button();
             this.tabOngletsApplication.SuspendLayout();
             this.tabLivres.SuspendLayout();
             this.grpLivresInfos.SuspendLayout();
@@ -1679,6 +1680,7 @@ namespace MediaTekDocuments.view
             // 
             // grpRevuesRecherche
             // 
+            this.grpRevuesRecherche.Controls.Add(this.btnCommandesRevues);
             this.grpRevuesRecherche.Controls.Add(this.btnRevuesSuppDocument);
             this.grpRevuesRecherche.Controls.Add(this.btnRevuesModifDocument);
             this.grpRevuesRecherche.Controls.Add(this.btnRevuesAjoutDocument);
@@ -2329,6 +2331,18 @@ namespace MediaTekDocuments.view
             this.btnReceptionRechercher.UseVisualStyleBackColor = true;
             this.btnReceptionRechercher.Click += new System.EventHandler(this.btnReceptionRechercher_Click);
             // 
+            // btnCommandesRevues
+            // 
+            this.btnCommandesRevues.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCommandesRevues.Location = new System.Drawing.Point(293, 133);
+            this.btnCommandesRevues.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCommandesRevues.Name = "btnCommandesRevues";
+            this.btnCommandesRevues.Size = new System.Drawing.Size(254, 27);
+            this.btnCommandesRevues.TabIndex = 26;
+            this.btnCommandesRevues.Text = "Commander un exemplaire";
+            this.btnCommandesRevues.UseVisualStyleBackColor = true;
+            this.btnCommandesRevues.Click += new System.EventHandler(this.btnCommandesRevues_Click);
+            // 
             // FrmMediatek
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2554,6 +2568,7 @@ namespace MediaTekDocuments.view
         private System.Windows.Forms.ComboBox cbxRevuesGenreAddEdit;
         private System.Windows.Forms.Button btnCommandesLivres;
         private System.Windows.Forms.Button btnCommandesDvd;
+        private System.Windows.Forms.Button btnCommandesRevues;
     }
 }
 

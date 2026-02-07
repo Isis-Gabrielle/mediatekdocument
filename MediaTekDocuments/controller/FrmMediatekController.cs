@@ -3,6 +3,7 @@ using MediaTekDocuments.model;
 using MediaTekDocuments.dal;
 using System.Xml.Linq;
 using System.Linq;
+using System;
 
 namespace MediaTekDocuments.controller
 {
@@ -83,7 +84,10 @@ namespace MediaTekDocuments.controller
             return access.GetAllCommandes();
         }
 
-
+        public List<Abonnement> GetAllAbonnements()
+        {
+            return access.GetAllAbonnements();
+        }
         /// <summary>
         /// récupère les exemplaires d'une revue
         /// </summary>
@@ -103,6 +107,13 @@ namespace MediaTekDocuments.controller
         {
             return access.GetAllSuivi();
         }
+
+        public List<Abonnement> GetAbonnements(string idDocument)
+        {
+            return access.GetAbonnements(idDocument);
+        }
+
+
         #endregion
 
         #region DELETE
@@ -110,7 +121,7 @@ namespace MediaTekDocuments.controller
         {
             return access.DeleteLivre(livre);
         }
-        public bool DeleteCommande(CommandeDocument commande)
+        public bool DeleteCommande(Commande commande)
         {
             return access.DeleteCommande(commande);
         }
@@ -118,10 +129,12 @@ namespace MediaTekDocuments.controller
         {
             return access.DeleteRevue(revue);
         }
+
         public bool DeleteDVD(Dvd dvd)
         {
             return access.DeleteDvd(dvd);
         }
+
         #endregion
 
         #region POST
@@ -151,6 +164,12 @@ namespace MediaTekDocuments.controller
         {
             return access.CreerCommandeDocument(commandedocument);
         }
+        public bool CreerAbonnement(Abonnement abonnement)
+        {
+            return access.CreerAbonnement(abonnement);
+        }
+
+        
         #endregion
 
         #region PUT
@@ -210,6 +229,7 @@ namespace MediaTekDocuments.controller
                 .Max();
             return (maxId + 1).ToString("D4");
         }
+
 
     }
 }

@@ -1852,5 +1852,12 @@ namespace MediaTekDocuments.view
             FrmMediatekCommande frm = new FrmMediatekCommande(idDvd, false);
             frm.ShowDialog();
         }
+
+        private void btnCommandesRevues_Click(object sender, EventArgs e)
+        {
+            string idRevue = (bdgRevuesListe.Current != null) ? ((Revue)bdgRevuesListe.Current).Id : null;
+            FrmMediatekCommande frm = new FrmMediatekCommande(idRevue, false, true);
+            frm.ShowDialog();
+        }
     }
 }

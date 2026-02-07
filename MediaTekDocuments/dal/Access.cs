@@ -140,6 +140,12 @@ namespace MediaTekDocuments.dal
             return lesRevues;
         }
 
+        public List<Abonnement> GetAllAbonnements()
+        {
+            List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement", null);
+            return lesAbonnements;
+        }
+
         public List<Commande> GetAllCommandes()
         {
             List<Commande> lesCommandes = TraitementRecup<Commande>(GET, "commande", null);
@@ -170,6 +176,14 @@ namespace MediaTekDocuments.dal
             IEnumerable<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
             return new List<Suivi>(lesSuivis);
         }
+
+        public List<Abonnement> GetAbonnements(string idDocument)
+        {
+            String jsonIdDocument = convertToJson("id", idDocument);
+            List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement/" + jsonIdDocument, null);
+            return lesAbonnements;
+        }
+
 
 
         #endregion GET
@@ -202,20 +216,21 @@ namespace MediaTekDocuments.dal
                 return false;
             }
         }
-        public bool DeleteCommande(CommandeDocument commande)
+        public bool DeleteCommande(Commande commande)
         {
             try
             {
                 string jsonId = convertToJson("id", commande.Id);
 
-                return TraitementRecup<CommandeDocument>(DELETE, "commande/" + jsonId, null) != null;
+                return TraitementRecup<Commande>(DELETE, "commande/" + jsonId, null) != null;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erreur DeleteCommandeDocument : " + ex.Message);
+                Console.WriteLine("Erreur DeleteCommande : " + ex.Message);
                 return false;
             }
         }
+
 
         #endregion DELETE
 
@@ -345,6 +360,28 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        public bool CreerAbonnement(Abonnement abonnement)
+        {
+            try
+            {
+                var abonnementData = new
+                {
+                    id = abonnement.Id,
+                    dateCommande = abonnement.DateCommande,
+                    montant = abonnement.Montant,
+                    dateFinAbonnement = abonnement.DateFinAbonnement,
+                    idRevue = abonnement.IdRevue
+                };
+
+                string json = JsonConvert.SerializeObject(abonnementData, new CustomDateTimeConverter());
+                return TraitementRecup<Abonnement>(POST, "abonnement", "champs=" + json) != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur CreerAbonnement : " + ex.Message);
+                return false;
+            }
+        }
         #endregion POST
 
         #region PUT
@@ -437,8 +474,8 @@ namespace MediaTekDocuments.dal
                 return false;
             }
         }
-        #endregion
 
+        #endregion
 
         /// <summary>
         /// Traitement de la récupération du retour de l'api, avec conversion du json en liste pour les select (GET)
