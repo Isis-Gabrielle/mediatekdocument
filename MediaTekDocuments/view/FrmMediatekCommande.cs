@@ -752,7 +752,7 @@ namespace MediaTekDocuments.view
         {
             if (bdgAbonnementsListe.Current is Abonnement abo)
             {
-                List<Exemplaire> exemplairesRevue = controller.GetExemplairesRevue(abo.IdRevue);
+                List<Exemplaire> exemplairesRevue = controller.GetExemplaires(abo.IdRevue);
 
                 bool aDesExemplairesRattaches = exemplairesRevue.Any(ex =>
                     abo.ParutionDansAbonnement(abo.DateCommande, abo.DateFinAbonnement, ex.DateAchat));

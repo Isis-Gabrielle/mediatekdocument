@@ -93,9 +93,9 @@ namespace MediaTekDocuments.controller
         /// </summary>
         /// <param name="idDocuement">id de la revue concernée</param>
         /// <returns>Liste d'objets Exemplaire</returns>
-        public List<Exemplaire> GetExemplairesRevue(string idDocument)
+        public List<Exemplaire> GetExemplaires(string idDocument)
         {
-            return access.GetExemplairesRevue(idDocument);
+            return access.GetExemplaires(idDocument);
         }
 
         public List<CommandeDocument> GetCommandesDocument(string idDocument)
@@ -106,6 +106,11 @@ namespace MediaTekDocuments.controller
         public List<Suivi> GetAllSuivi()
         {
             return access.GetAllSuivi();
+        }
+
+        public List<Etat> GetAllEtats()
+        {
+            return access.GetAllEtats();
         }
 
         public List<Abonnement> GetAbonnements(string idDocument)
@@ -125,6 +130,12 @@ namespace MediaTekDocuments.controller
         {
             return access.DeleteCommande(commande);
         }
+
+        public bool DeleteExemplaire(Exemplaire exemplaire)
+        {
+            return access.DeleteExemplaire(exemplaire);
+        }
+
         public bool DeleteRevue(Revue revue)
         {
             return access.DeleteRevue(revue);
@@ -188,6 +199,11 @@ namespace MediaTekDocuments.controller
         public bool EditSuiviCommande(string idCommande, string idSuivi)
         {
             return access.EditSuiviCommande(idCommande, idSuivi);
+        }
+
+        public bool EditExemplaireEtat(string idDocument, int numero, string idEtat)
+        {
+            return access.EditExemplaireEtat(idDocument, numero, idEtat);
         }
         #endregion
 

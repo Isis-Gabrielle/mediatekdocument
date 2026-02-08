@@ -448,6 +448,7 @@
             this.dgvCommandeDvdListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCommandeDvdListe.Size = new System.Drawing.Size(710, 360);
             this.dgvCommandeDvdListe.TabIndex = 52;
+            this.dgvCommandeDvdListe.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCommandeDvdListe_ColumnHeaderMouseClick);
             // 
             // tbxDvdImage
             // 
@@ -869,6 +870,7 @@
             this.dgvCommandeLivresListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCommandeLivresListe.Size = new System.Drawing.Size(710, 384);
             this.dgvCommandeLivresListe.TabIndex = 52;
+            this.dgvCommandeLivresListe.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DgvLivresListe_ColumnHeaderMouseClick);
             // 
             // txbLivresImage
             // 
@@ -1286,6 +1288,7 @@
             this.dgvCommandeRevuesListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCommandeRevuesListe.Size = new System.Drawing.Size(710, 387);
             this.dgvCommandeRevuesListe.TabIndex = 52;
+            this.dgvCommandeRevuesListe.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvCommandeRevuesListe_ColumnHeaderMouseClick);
             // 
             // tbxRevuesImage
             // 

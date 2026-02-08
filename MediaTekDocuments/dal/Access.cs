@@ -153,11 +153,11 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne les exemplaires d'une revue
+        /// Retourne les exemplaires d'un document
         /// </summary>
-        /// <param name="idDocument">id de la revue concernée</param>
+        /// <param name="idDocument">id du document concerné</param>
         /// <returns>Liste d'objets Exemplaire</returns>
-        public List<Exemplaire> GetExemplairesRevue(string idDocument)
+        public List<Exemplaire> GetExemplaires(string idDocument)
         {
             String jsonIdDocument = convertToJson("id", idDocument);
             List<Exemplaire> lesExemplaires = TraitementRecup<Exemplaire>(GET, "exemplaire/" + jsonIdDocument, null);
@@ -175,6 +175,12 @@ namespace MediaTekDocuments.dal
         {
             IEnumerable<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
             return new List<Suivi>(lesSuivis);
+        }
+
+        public List<Etat> GetAllEtats()
+        {
+            IEnumerable<Etat> lesEtats = TraitementRecup<Etat>(GET, "etat", null);
+            return new List<Etat>(lesEtats);
         }
 
         public List<Abonnement> GetAbonnements(string idDocument)
@@ -196,7 +202,7 @@ namespace MediaTekDocuments.dal
         private bool SupprimerDocument(string table, string id)
         {
             // Vérification des exemplaires avant suppression
-            List<Exemplaire> exemplaires = GetExemplairesRevue(id);
+            List<Exemplaire> exemplaires = GetExemplaires(id);
             if (exemplaires.Count > 0)
             {
                 MessageBox.Show("Suppression impossible : des exemplaires sont rattachés.");
@@ -227,6 +233,26 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur DeleteCommande : " + ex.Message);
+                return false;
+            }
+        }
+
+        public bool DeleteExemplaire(Exemplaire exemplaire)
+        {
+            try
+            {
+                var idData = new
+                {
+                    id = exemplaire.Id,
+                    numero = exemplaire.Numero,
+                };
+                string jsonId = JsonConvert.SerializeObject(idData);
+
+                return TraitementRecup<Exemplaire>(DELETE, "exemplaire/" + jsonId, null) != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur DeleteExemplaire : " + ex.Message);
                 return false;
             }
         }
@@ -471,6 +497,27 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur EditSuiviCommande : " + ex.Message);
+                return false;
+            }
+        }
+
+        public bool EditExemplaireEtat(string idDocument, int numero, string idEtat)
+        {
+            try
+            {
+                var etatData = new
+                {
+                    numero = numero.ToString(),
+                    idetat = idEtat
+                };
+
+                string json = JsonConvert.SerializeObject(etatData);
+
+                return TraitementRecup<Exemplaire>(PUT, "exemplaire/" + idDocument, "champs=" + json) != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur EditExemplaireEtat : " + ex.Message);
                 return false;
             }
         }
