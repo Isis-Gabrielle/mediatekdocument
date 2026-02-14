@@ -5,8 +5,10 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace MediaTekDocuments.dal
 {
@@ -78,6 +80,26 @@ namespace MediaTekDocuments.dal
             return instance;
         }
 
+        public Utilisateur Login(string email, string password)
+        {
+            Dictionary<string, object> loginData = new Dictionary<string, object> {
+        { "email", email },
+        { "password", password }};
+
+            string jsonLogin = JsonConvert.SerializeObject(loginData);
+
+            try
+            {
+                List<Utilisateur> liste = TraitementRecup<Utilisateur>(GET, "utilisateur/" + jsonLogin, null);
+
+                return (liste != null && liste.Count > 0) ? liste[0] : null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Erreur Authentification : " + e.Message);
+                return null;
+            }
+        }
         #region GET
 
         /// <summary>

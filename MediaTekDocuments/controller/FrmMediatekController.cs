@@ -24,6 +24,12 @@ namespace MediaTekDocuments.controller
         {
             access = Access.GetInstance();
         }
+
+        public Utilisateur Login(string email, string password)
+        {
+            return access.Login(email, password);
+
+        }
         #region GET
         /// <summary>
         /// getter sur la liste des genres

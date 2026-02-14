@@ -31,7 +31,7 @@ namespace MediaTekDocuments.view
         {
             this.tabOngletsApplication = new System.Windows.Forms.TabControl();
             this.tabLivres = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpLivresExemplaires = new System.Windows.Forms.GroupBox();
             this.dgvExemplaireLivresListe = new System.Windows.Forms.DataGridView();
             this.btnCommandesLivres = new System.Windows.Forms.Button();
             this.label61 = new System.Windows.Forms.Label();
@@ -226,7 +226,7 @@ namespace MediaTekDocuments.view
             this.btnReceptionRechercher = new System.Windows.Forms.Button();
             this.tabOngletsApplication.SuspendLayout();
             this.tabLivres.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.grpLivresExemplaires.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvExemplaireLivresListe)).BeginInit();
             this.grpLivresInfos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcbLivresImage)).BeginInit();
@@ -270,7 +270,7 @@ namespace MediaTekDocuments.view
             // 
             // tabLivres
             // 
-            this.tabLivres.Controls.Add(this.groupBox1);
+            this.tabLivres.Controls.Add(this.grpLivresExemplaires);
             this.tabLivres.Controls.Add(this.grpLivresInfos);
             this.tabLivres.Controls.Add(this.grpLivresRecherche);
             this.tabLivres.Location = new System.Drawing.Point(4, 22);
@@ -282,22 +282,22 @@ namespace MediaTekDocuments.view
             this.tabLivres.UseVisualStyleBackColor = true;
             this.tabLivres.Enter += new System.EventHandler(this.TabLivres_Enter);
             // 
-            // groupBox1
+            // grpLivresExemplaires
             // 
-            this.groupBox1.Controls.Add(this.dgvExemplaireLivresListe);
-            this.groupBox1.Controls.Add(this.btnCommandesLivres);
-            this.groupBox1.Controls.Add(this.label61);
-            this.groupBox1.Controls.Add(this.cbxLivresExemplaireEtat);
-            this.groupBox1.Controls.Add(this.btnLivresExemplairesSaveEtat);
-            this.groupBox1.Controls.Add(this.btnLivresExemplairesSupp);
-            this.groupBox1.Location = new System.Drawing.Point(11, 825);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(1145, 256);
-            this.groupBox1.TabIndex = 21;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Exemplaires";
+            this.grpLivresExemplaires.Controls.Add(this.dgvExemplaireLivresListe);
+            this.grpLivresExemplaires.Controls.Add(this.btnCommandesLivres);
+            this.grpLivresExemplaires.Controls.Add(this.label61);
+            this.grpLivresExemplaires.Controls.Add(this.cbxLivresExemplaireEtat);
+            this.grpLivresExemplaires.Controls.Add(this.btnLivresExemplairesSaveEtat);
+            this.grpLivresExemplaires.Controls.Add(this.btnLivresExemplairesSupp);
+            this.grpLivresExemplaires.Location = new System.Drawing.Point(11, 825);
+            this.grpLivresExemplaires.Margin = new System.Windows.Forms.Padding(4);
+            this.grpLivresExemplaires.Name = "grpLivresExemplaires";
+            this.grpLivresExemplaires.Padding = new System.Windows.Forms.Padding(4);
+            this.grpLivresExemplaires.Size = new System.Drawing.Size(1145, 256);
+            this.grpLivresExemplaires.TabIndex = 21;
+            this.grpLivresExemplaires.TabStop = false;
+            this.grpLivresExemplaires.Text = "Exemplaires";
             // 
             // dgvExemplaireLivresListe
             // 
@@ -2589,8 +2589,8 @@ namespace MediaTekDocuments.view
             this.Text = "Gestion des documents de la médiathèque";
             this.tabOngletsApplication.ResumeLayout(false);
             this.tabLivres.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpLivresExemplaires.ResumeLayout(false);
+            this.grpLivresExemplaires.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvExemplaireLivresListe)).EndInit();
             this.grpLivresInfos.ResumeLayout(false);
             this.grpLivresInfos.PerformLayout();
@@ -2809,7 +2809,7 @@ namespace MediaTekDocuments.view
         private System.Windows.Forms.Button btnCommandesLivres;
         private System.Windows.Forms.Button btnCommandesDvd;
         private System.Windows.Forms.Button btnCommandesRevues;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grpLivresExemplaires;
         private System.Windows.Forms.Button btnLivresExemplairesSupp;
         private System.Windows.Forms.Label label61;
         private System.Windows.Forms.ComboBox cbxLivresExemplaireEtat;

@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Xml.Linq;
 using System.Collections;
+using static System.Collections.Specialized.BitVector32;
 
 namespace MediaTekDocuments.view
 
@@ -30,10 +31,32 @@ namespace MediaTekDocuments.view
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
-        internal FrmMediatek()
+        internal FrmMediatek(Utilisateur user)
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
+
+            switch (user.IdService)
+            {
+                case "00001":
+                    break;
+
+                case "00002":
+                    tabReceptionRevue.Enabled = false;
+                    cbxLivresExemplaireEtat.Enabled = false;
+                    btnCommandesLivres.Enabled = false;
+                    btnLivresExemplairesSupp.Enabled = false;
+                    btnLivresExemplairesSaveEtat.Enabled = false;
+                    btnLivresAjoutDocument.Enabled = false;
+                    btnLivresModifDocument.Enabled = false;
+                    btnLivresSuppDocument.Enabled = false;
+                    break;
+
+                case "00003":
+                    MessageBox.Show("Droits insuffisants pour accéder à l'application.");
+                    Application.Exit();
+                    break;
+            }
         }
 
         /// <summary>
