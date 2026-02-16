@@ -10,6 +10,8 @@ using System.Configuration;
 using System.Net;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Serilog;
+using System.Security.Policy;
 
 namespace MediaTekDocuments.dal
 {
@@ -63,13 +65,22 @@ namespace MediaTekDocuments.dal
             String apiString;
             try
             {
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.Console()
+                    .WriteTo.File("logs/log.txt")
+                    .CreateLogger();
+
                 authenticationString = GetConnectionStringByName(connectionName);
                 apiString = GetConnectionStringByName(uriApi);
                 api = ApiRest.GetInstance(apiString, authenticationString);
+                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Log.Fatal("Access.Access : Erreur critique d'initialisation. Connexion={0}, Erreur={1}", connectionName, e.Message);
+                
                 Environment.Exit(0);
             }
         }
@@ -102,7 +113,6 @@ namespace MediaTekDocuments.dal
         { "password", password }};
 
             string jsonLogin = JsonConvert.SerializeObject(loginData);
-
             try
             {
                 List<Utilisateur> liste = TraitementRecup<Utilisateur>(GET, "utilisateur/" + jsonLogin, null);
@@ -112,6 +122,7 @@ namespace MediaTekDocuments.dal
             catch (Exception e)
             {
                 Console.WriteLine("Erreur Authentification : " + e.Message);
+                Log.Error("Access.Login catch request {0} on {1} erreur={2}", GET, "utilisateur/", e.Message);
                 return null;
             }
         }
@@ -256,6 +267,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine($"Erreur suppression {table} : " + ex.Message);
+                Log.Error("Access.SupprimerDocument catch request {0} on {1} erreur={2}", DELETE, table, ex.Message);
                 return false;
             }
         }
@@ -270,6 +282,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur DeleteCommande : " + ex.Message);
+                Log.Error("Access.DeleteCommande catch request {0} on {1} erreur={2}", DELETE, "commande/", ex.Message);
                 return false;
             }
         }
@@ -290,6 +303,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur DeleteExemplaire : " + ex.Message);
+                Log.Error("Access.DeleteExemplaire catch request {0} on {1} erreur={2}", DELETE, "exemplaire/", ex.Message);
                 return false;
             }
         }
@@ -315,6 +329,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Log.Error("Access.CreerExemplaire catch request {0} on {1} erreur={2}", POST, "exemplaire", ex.Message);
             }
             return false;
         }
@@ -342,6 +357,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Log.Error("Access.AddLivre catch request {0} on {1} erreur={2}", POST, "livre", ex.Message);
                 return false;
             }
         }
@@ -365,6 +381,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur CreerCommandeDocument : " + ex.Message);
+                Log.Error("Access.CreerCommandeDocument catch request {0} on {1} erreur={2}", POST, "commandedocument", ex.Message);
                 return false;
             }
         }
@@ -392,6 +409,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Log.Error("Access.AddRevue catch request {0} on {1} erreur={2}", POST, "revue", ex.Message);
                 return false;
             }
         }
@@ -419,6 +437,8 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Log.Error("Access.AddDVD catch request {0} on {1} erreur={2}", POST, "dvd", ex.Message);
+
                 return false;
             }
         }
@@ -442,6 +462,8 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur CreerAbonnement : " + ex.Message);
+                Log.Error("Access.CreerAbonnement catch request {0} on {1} erreur={2}", POST, "abonnement", ex.Message);
+
                 return false;
             }
         }
@@ -471,6 +493,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur EditLivre : " + ex.Message);
+                Log.Error("Access.EditLivre catch request {0} on {1} erreur={2}", PUT, "livre/", ex.Message);
                 return false;
             }
         }
@@ -494,7 +517,11 @@ namespace MediaTekDocuments.dal
                 string json = JsonConvert.SerializeObject(combinedData);
                 return TraitementRecup<Dvd>(PUT, "dvd/" + dvd.Id, champs + json) != null;
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur EditDvd : " + ex.Message);
+                Log.Error("Access.EditDvd catch request {0} on {1} erreur={2}", PUT, "dvd/", ex.Message); 
+                return false; }
         }
 
 
@@ -516,7 +543,11 @@ namespace MediaTekDocuments.dal
                 string json = JsonConvert.SerializeObject(combinedData);
                 return TraitementRecup<Revue>(PUT, "revue/" + revue.Id, champs + json) != null;
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur EditRevue : " + ex.Message);
+                Log.Error("Access.EditRevue catch request {0} on {1} erreur={2}", PUT, "revue/", ex.Message); 
+                return false; }
         }
         public bool EditSuiviCommande(string idCommande, string idSuivi)
         {
@@ -534,6 +565,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur EditSuiviCommande : " + ex.Message);
+                Log.Error("Access.EditSuiviCommande catch request {0} on {1} erreur={2}", PUT, "commandedocument/", ex.Message);
                 return false;
             }
         }
@@ -555,6 +587,7 @@ namespace MediaTekDocuments.dal
             catch (Exception ex)
             {
                 Console.WriteLine("Erreur EditExemplaireEtat : " + ex.Message);
+                Log.Error("Access.EditExemplaireEtat catch request {0} on {1} erreur={2}", PUT, "exemplaire/", ex.Message);
                 return false;
             }
         }
@@ -590,12 +623,25 @@ namespace MediaTekDocuments.dal
                 }
                 else
                 {
+                    string secureMessage = message;
+                    if (message.Contains("utilisateur/"))
+                    {
+                        secureMessage = "utilisateur/";
+                    }
+
                     Console.WriteLine("code erreur = " + code + " message = " + (String)retour["message"]);
+
+                    Log.Error("Access.TraitementRecup erreur API : Methode={0} Requête={1} Code={2}",
+                              methode, secureMessage, code);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Erreur lors de l'accès à l'API : " + e.Message);
+                string secureMessage = message.Contains("utilisateur/") ? "utilisateur/ (masqué)" : message;
+
+                Console.WriteLine("Erreur critique API : " + e.Message);
+                Log.Fatal("Access.TraitementRecup catch critique : Methode={0} Requête={1} Erreur={2}",
+                          methode, secureMessage, e.Message);
                 Environment.Exit(0);
             }
             return liste;
