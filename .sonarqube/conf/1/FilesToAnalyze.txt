@@ -1,0 +1,10 @@
+﻿C:\wamp64\www\MediaTekDocuments\MediatekDocumentsTests\ImplicitUsings.cs
+C:\wamp64\www\MediaTekDocuments\MediatekDocumentsTests\StepDefinitions\AbonnementStepsDefinitions.cs
+C:\Users\HO OMEN\.nuget\packages\microsoft.net.test.sdk\18.0.1\build\net8.0\Microsoft.NET.Test.Sdk.Program.cs
+C:\Users\HO OMEN\.nuget\packages\microsoft.testplatform.testhost\18.0.1\build\net8.0\x64\testhost.exe
+C:\Users\HO OMEN\.nuget\packages\microsoft.testplatform.testhost\18.0.1\build\net8.0\x64\testhost.dll
+C:\Users\HO OMEN\.nuget\packages\mstest.testadapter\3.10.2\buildTransitive\_localization\fr\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
+C:\Users\HO OMEN\.nuget\packages\reqnroll.mstest\3.2.0\lib\netstandard2.0\Reqnroll.MSTest.ReqnrollPlugin.dll
+C:\Users\HO OMEN\.nuget\packages\mstest.testadapter\3.10.2\buildTransitive\net8.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\HO OMEN\.nuget\packages\mstest.testadapter\3.10.2\buildTransitive\net8.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\HO OMEN\.nuget\packages\mstest.testadapter\3.10.2\buildTransitive\net8.0\Microsoft.TestPlatform.AdapterUtilities.dll

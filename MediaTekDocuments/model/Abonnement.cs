@@ -18,7 +18,7 @@ namespace MediaTekDocuments.model
 
         public bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateFin, DateTime dateParution)
         {
-            return (dateParution >= dateCommande && dateParution <= dateFin);
+            return dateParution >= dateCommande && dateParution <= dateFin;
         }
     }
 }

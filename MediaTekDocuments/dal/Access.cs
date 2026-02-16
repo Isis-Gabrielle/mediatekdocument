@@ -21,7 +21,7 @@ namespace MediaTekDocuments.dal
         /// <summary>
         /// adresse de l'API
         /// </summary>
-        private static readonly string uriApi = "http://localhost/rest_mediatekdocuments/";
+        private static readonly string uriApi = "MediaTekDocuments.Properties.Settings.apiConnectionString";
 
         private static readonly string connectionName = "mediatekDocuments.Properties.Settings.mediatekDocumentsConnectionString";
 
@@ -51,6 +51,8 @@ namespace MediaTekDocuments.dal
 
         private const string DELETE = "DELETE";
 
+        private const string champs = "champs=";
+
         /// <summary>
         /// Méthode privée pour créer un singleton
         /// initialise l'accès à l'API
@@ -58,10 +60,12 @@ namespace MediaTekDocuments.dal
         private Access()
         {
             String authenticationString;
+            String apiString;
             try
             {
                 authenticationString = GetConnectionStringByName(connectionName);
-                api = ApiRest.GetInstance(uriApi, authenticationString);
+                apiString = GetConnectionStringByName(uriApi);
+                api = ApiRest.GetInstance(apiString, authenticationString);
             }
             catch (Exception e)
             {
@@ -305,7 +309,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
             try
             {
-                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", "champs=" + jsonExemplaire);
+                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", champs + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -333,7 +337,7 @@ namespace MediaTekDocuments.dal
                 };
 
                 string json = JsonConvert.SerializeObject(livreData);
-                return TraitementRecup<Livre>(POST, "livre", "champs=" + json) != null;
+                return TraitementRecup<Livre>(POST, "livre", champs + json) != null;
             }
             catch (Exception ex)
             {
@@ -356,7 +360,7 @@ namespace MediaTekDocuments.dal
                 };
 
                 string json = JsonConvert.SerializeObject(commandeData, new CustomDateTimeConverter());
-                return TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + json) != null;
+                return TraitementRecup<CommandeDocument>(POST, "commandedocument", champs + json) != null;
             }
             catch (Exception ex)
             {
@@ -383,7 +387,7 @@ namespace MediaTekDocuments.dal
                 };
 
                 string json = JsonConvert.SerializeObject(revueData);
-                return TraitementRecup<Revue>(POST, "revue", "champs=" + json) != null;
+                return TraitementRecup<Revue>(POST, "revue", champs + json) != null;
             }
             catch (Exception ex)
             {
@@ -410,7 +414,7 @@ namespace MediaTekDocuments.dal
                 };
 
                 string json = JsonConvert.SerializeObject(dvdData);
-                return TraitementRecup<Dvd>(POST, "dvd", "champs=" + json) != null;
+                return TraitementRecup<Dvd>(POST, "dvd", champs + json) != null;
             }
             catch (Exception ex)
             {
@@ -433,7 +437,7 @@ namespace MediaTekDocuments.dal
                 };
 
                 string json = JsonConvert.SerializeObject(abonnementData, new CustomDateTimeConverter());
-                return TraitementRecup<Abonnement>(POST, "abonnement", "champs=" + json) != null;
+                return TraitementRecup<Abonnement>(POST, "abonnement", champs + json) != null;
             }
             catch (Exception ex)
             {
@@ -461,7 +465,7 @@ namespace MediaTekDocuments.dal
                     collection = livre.Collection
                 };
                 string json = JsonConvert.SerializeObject(combinedData);
-                 var result = TraitementRecup<Livre>(PUT, "livre/" + livre.Id, "champs=" + json);
+                 var result = TraitementRecup<Livre>(PUT, "livre/" + livre.Id, champs + json);
                 return result != null;
             }
             catch (Exception ex)
@@ -488,7 +492,7 @@ namespace MediaTekDocuments.dal
                     duree = dvd.Duree
                 };
                 string json = JsonConvert.SerializeObject(combinedData);
-                return TraitementRecup<Dvd>(PUT, "dvd/" + dvd.Id, "champs=" + json) != null;
+                return TraitementRecup<Dvd>(PUT, "dvd/" + dvd.Id, champs + json) != null;
             }
             catch { return false; }
         }
@@ -510,7 +514,7 @@ namespace MediaTekDocuments.dal
                     delaiMiseADispo = revue.DelaiMiseADispo
                 };
                 string json = JsonConvert.SerializeObject(combinedData);
-                return TraitementRecup<Revue>(PUT, "revue/" + revue.Id, "champs=" + json) != null;
+                return TraitementRecup<Revue>(PUT, "revue/" + revue.Id, champs + json) != null;
             }
             catch { return false; }
         }
@@ -525,7 +529,7 @@ namespace MediaTekDocuments.dal
 
                 string json = JsonConvert.SerializeObject(suiviData);
 
-                return TraitementRecup<CommandeDocument>(PUT, "commandedocument/" + idCommande, "champs=" + json) != null;
+                return TraitementRecup<CommandeDocument>(PUT, "commandedocument/" + idCommande, champs + json) != null;
             }
             catch (Exception ex)
             {
@@ -546,7 +550,7 @@ namespace MediaTekDocuments.dal
 
                 string json = JsonConvert.SerializeObject(etatData);
 
-                return TraitementRecup<Exemplaire>(PUT, "exemplaire/" + idDocument, "champs=" + json) != null;
+                return TraitementRecup<Exemplaire>(PUT, "exemplaire/" + idDocument, champs + json) != null;
             }
             catch (Exception ex)
             {

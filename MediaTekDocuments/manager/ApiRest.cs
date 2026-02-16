@@ -88,24 +88,8 @@ namespace MediaTekDocuments.manager
                 default:
                     return new JObject();
             }
-            string reponseBrute = httpResponse.Content.ReadAsStringAsync().Result;
-
-            // 2. AFFICHEZ CETTE VARIABLE dans la console de sortie (Debug) de Visual Studio
-            System.Diagnostics.Debug.WriteLine("RETOUR API : " + reponseBrute);
-
-            // 3. Si c'est du JSON valide, on le convertit comme avant
-            try
-            {
-                return JObject.Parse(reponseBrute);
-            }
-            catch (Exception ex)
-            {
-                // Si ça plante ici, regardez 'reponseBrute' dans l'espion : 
-                // vous y trouverez l'erreur PHP (ex: "Fatal error: ...")
-                throw new Exception("L'API n'a pas renvoyé de JSON valide. Contenu reçu : " + reponseBrute);
-            }
-            // récupération de l'information retournée par l'api
-            return httpResponse.Content.ReadAsAsync<JObject>().Result;
+            var json = httpResponse.Content.ReadAsStringAsync().Result;
+            return JObject.Parse(json);
         }
 
     }
