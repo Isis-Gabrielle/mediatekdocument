@@ -15,8 +15,6 @@ namespace MediaTekDocuments
 {
     public partial class FrmMediatekAuth : Form
     {
-
-
         private readonly FrmMediatekController controller;
 
         public FrmMediatekAuth()

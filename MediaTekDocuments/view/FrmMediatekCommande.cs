@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace MediaTekDocuments.view
@@ -23,12 +24,15 @@ namespace MediaTekDocuments.view
         private List<CommandeDocument> lesCommandesDvd = new List<CommandeDocument>();
         private List<Abonnement> lesAbonnements = new List<Abonnement>();
 
-        private List<Livre> lesLivres = new List<Livre>();
-        private List<Dvd> lesDvd = new List<Dvd>();
-        private List<Revue> lesRevues = new List<Revue>();
+        private List<Livre> lesLivres;
+        private List<Dvd> lesDvd;
+        private List<Revue> lesRevues;
 
         private readonly FrmMediatekController controller;
         private string idDocumentPreselectionne;
+
+        private static string reglee = "Réglée";
+        private static string livree = "Livrée";
 
         public FrmMediatekCommande(string idDocument = null, bool estLivre = true, bool estRevue = false)
         {
@@ -123,16 +127,13 @@ namespace MediaTekDocuments.view
         {
             SetEtatCommande(EtatCommande.Consultation);
 
-            if (tabOngletsApplication.SelectedTab == tabLivres)
+            if (tabOngletsApplication.SelectedTab == tabLivres && !string.IsNullOrEmpty(txbLivresNumRecherche.Text))
             {
-
-                if (!string.IsNullOrEmpty(txbLivresNumRecherche.Text))
-                    btnReceptionRechercher_Click(null, null);
+                btnReceptionRechercher_Click(null, null);
             }
-            else if (tabOngletsApplication.SelectedTab == tabDvd)
+            else if (tabOngletsApplication.SelectedTab == tabDvd && !string.IsNullOrEmpty(tbxDvdNumero.Text))
             {
-                if (!string.IsNullOrEmpty(tbxDvdNumero.Text))
-                    btnReceptionRechercher_Click(null, null);
+                btnReceptionRechercher_Click(null, null);
             }
         }
 
@@ -271,7 +272,6 @@ namespace MediaTekDocuments.view
         {
             if (bdgCommandeLivreListe.Current != null)
             {
-                CommandeDocument commande = (CommandeDocument)bdgCommandeLivreListe.Current;
                 SetEtatCommande(EtatCommande.Modification);
                 cbxLivresCommandesSuivi.Enabled = true;
             }
@@ -286,7 +286,7 @@ namespace MediaTekDocuments.view
             if (bdgCommandeLivreListe.Current != null)
             {
                 CommandeDocument commande = (CommandeDocument)bdgCommandeLivreListe.Current;
-                if (commande.LibelleSuivi == "Livrée" || commande.LibelleSuivi == "Réglée")
+                if (commande.LibelleSuivi == livree || commande.LibelleSuivi == reglee)
                 {
                     MessageBox.Show("Une commande déjà livrée ou réglée ne peut pas être supprimée.", "Interdit");
                     return;
@@ -334,14 +334,14 @@ namespace MediaTekDocuments.view
                 Suivi leSuivi = (Suivi)cbxLivresCommandesSuivi.SelectedItem;
                 if (laCommande != null && leSuivi != null)
                 {
-                    if ((laCommande.LibelleSuivi == "Livrée" || laCommande.LibelleSuivi == "Réglée")
+                    if ((laCommande.LibelleSuivi == livree || laCommande.LibelleSuivi == reglee)
                         && (leSuivi.Libelle == "En cours" || leSuivi.Libelle == "Relancée"))
                     {
                         MessageBox.Show("Impossible de revenir à une étape précédente pour une commande livrée ou réglée.");
                         return;
                     }
 
-                    if (leSuivi.Libelle == "Réglée" && laCommande.LibelleSuivi != "Livrée")
+                    if (leSuivi.Libelle == reglee && laCommande.LibelleSuivi != livree)
                     {
                         MessageBox.Show("Une commande doit être à l'état 'Livrée' avant d'être passée à 'Réglée'.");
                         return;
@@ -393,7 +393,7 @@ namespace MediaTekDocuments.view
                         MessageBox.Show("Erreur lors de l'enregistrement technique.");
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show(
                       "Veuillez vérifier la saisie des montants et quantités."
@@ -463,16 +463,11 @@ namespace MediaTekDocuments.view
             {
                 CommandeDocument laCommande = (CommandeDocument)bdgCommandedDvdListe.Current;
                 Suivi leSuivi = (Suivi)cbxDvdCommandesSuivi.SelectedItem;
-                if (laCommande != null && leSuivi != null)
+                if (laCommande != null && leSuivi != null && controller.EditSuiviCommande(laCommande.Id, leSuivi.Id))
                 {
-                    if (
-                  controller.EditSuiviCommande(laCommande.Id, leSuivi.Id)
-                )
-                    {
                         laCommande.IdSuivi = leSuivi.Id;
                         laCommande.LibelleSuivi = leSuivi.Libelle;
                         FinirEdition("Suivi mis à jour avec succès.");
-                    }
                 }
             }
             else if (etatCommande == EtatCommande.Ajout)
@@ -511,7 +506,7 @@ namespace MediaTekDocuments.view
                         MessageBox.Show("Erreur lors de l'enregistrement technique.");
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show(
                       "Veuillez vérifier la saisie des montants et quantités."
@@ -540,7 +535,7 @@ namespace MediaTekDocuments.view
             if (bdgCommandedDvdListe.Current != null)
             {
                 CommandeDocument commande = (CommandeDocument)bdgCommandedDvdListe.Current;
-                if (commande.LibelleSuivi == "Livrée" || commande.LibelleSuivi == "Réglée")
+                if (commande.LibelleSuivi == livree || commande.LibelleSuivi == reglee)
                 {
                     MessageBox.Show("Une commande déjà livrée ou réglée ne peut pas être supprimée.", "Interdit");
                     return;
@@ -583,7 +578,6 @@ namespace MediaTekDocuments.view
         {
             if (bdgCommandedDvdListe.Current != null)
             {
-                CommandeDocument commande = (CommandeDocument)bdgCommandedDvdListe.Current;
                 SetEtatCommande(EtatCommande.Modification);
                 cbxDvdCommandesSuivi.Enabled = true;
             }
@@ -765,13 +759,10 @@ namespace MediaTekDocuments.view
                 }
 
                 if (MessageBox.Show("Voulez-vous vraiment supprimer cet abonnement ?", "Confirmation",
-                    MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    MessageBoxButtons.YesNo) == DialogResult.Yes && controller.DeleteCommande(abo))
                 {
-                    if (controller.DeleteCommande(abo))
-                    {
                         lesAbonnements.Remove(abo);
                         RemplirAbonnementListe(lesAbonnements);
-                    }
                 }
             }
         }

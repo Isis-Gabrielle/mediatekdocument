@@ -1,6 +1,5 @@
 ﻿namespace MediaTekDocuments.model
 {
-
     public class Suivi
     {
         public string Id { get; set; }

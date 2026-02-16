@@ -1,6 +1,5 @@
 ﻿namespace MediaTekDocuments.model
 {
-
     public class Utilisateur
     {
         public string Id { get; }

@@ -18,8 +18,5 @@ namespace MediaTekDocuments.model
             this.Auteur = auteur;
             this.Collection = collection;
         }
-
-
-
     }
 }
