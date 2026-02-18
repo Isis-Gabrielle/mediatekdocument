@@ -351,8 +351,6 @@ namespace MediaTekDocuments.view
                   controller.EditSuiviCommande(laCommande.Id, leSuivi.Id)
                 )
                     {
-                        laCommande.IdSuivi = leSuivi.Id;
-                        laCommande.LibelleSuivi = leSuivi.Libelle;
                         FinirEdition("Suivi mis à jour avec succès.");
                     }
                 }
@@ -465,8 +463,6 @@ namespace MediaTekDocuments.view
                 Suivi leSuivi = (Suivi)cbxDvdCommandesSuivi.SelectedItem;
                 if (laCommande != null && leSuivi != null && controller.EditSuiviCommande(laCommande.Id, leSuivi.Id))
                 {
-                        laCommande.IdSuivi = leSuivi.Id;
-                        laCommande.LibelleSuivi = leSuivi.Libelle;
                         FinirEdition("Suivi mis à jour avec succès.");
                 }
             }

@@ -5,8 +5,8 @@
     /// </summary>
     public class Revue : Document
     {
-        public string Periodicite { get; set; }
-        public int DelaiMiseADispo { get; set; }
+        public string Periodicite { get; }
+        public int DelaiMiseADispo { get;}
 
         public Revue(string id, string titre, string image, string idGenre, string genre,
             string idPublic, string lePublic, string idRayon, string rayon,

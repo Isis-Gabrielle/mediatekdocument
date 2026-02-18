@@ -5,10 +5,10 @@ namespace MediaTekDocuments.model
 {
     public class CommandeDocument : Commande
     {
-        public int NbExemplaire { get; set; }
-        public string IdLivreDvd { get; set; }
-        public string IdSuivi { get; set; }
-        public string LibelleSuivi { get; set; }
+        public int NbExemplaire { get; }
+        public string IdLivreDvd { get;}
+        public string IdSuivi { get;}
+        public string LibelleSuivi { get; }
 
         public CommandeDocument(string id, DateTime dateCommande, int montant,
                                 int nbExemplaire, string idLivreDvd, string idSuivi, string libelleSuivi)

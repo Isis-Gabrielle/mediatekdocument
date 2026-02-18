@@ -1673,8 +1673,6 @@ namespace MediaTekDocuments.view
 
             if (exemplaire != null && nouvelEtat != null && controller.EditExemplaireEtat(exemplaire.Id, exemplaire.Numero, nouvelEtat.Id))
             {
-                    exemplaire.IdEtat = nouvelEtat.Id;
-                    exemplaire.LibelleEtat = nouvelEtat.Libelle;
                     MessageBox.Show("État mis à jour.", info);
             }
         }

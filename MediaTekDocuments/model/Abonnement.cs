@@ -5,8 +5,8 @@ namespace MediaTekDocuments.model
 {
     public class Abonnement : Commande
     {
-        public DateTime DateFinAbonnement { get; set; }
-        public string IdRevue { get; set; }
+        public DateTime DateFinAbonnement { get;}
+        public string IdRevue { get; }
 
         public Abonnement(string id, DateTime dateCommande, int montant,
                          DateTime dateFinAbonnement, string idRevue)
