@@ -2,7 +2,10 @@
 
 namespace MediaTekDocuments.model
 {
-
+    /// <summary>
+    /// Classe métier Commande (réunit les infomations communes à toutes les commandes : CommandeDocument, Abonnement)
+    /// </summary>
+    /// 
     public class Commande
     {
 

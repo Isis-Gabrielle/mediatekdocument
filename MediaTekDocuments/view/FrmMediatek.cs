@@ -14,29 +14,62 @@ namespace MediaTekDocuments.view
 
 {
     /// <summary>
-    /// Classe d'affichage
+    /// Fenêtre de gestion des documents et leurs exemplaires
     /// </summary>
     public partial class FrmMediatek : Form
     {
         #region Commun
 
+        /// <summary>
+        /// Source de données pour les genres
+        /// </summary>
         private readonly BindingSource bdgGenres = new BindingSource();
+
+        /// <summary>
+        /// Source de données pour les publics
+        /// </summary>
+        /// 
         private readonly BindingSource bdgPublics = new BindingSource();
+        /// <summary>
+        /// Source de données pour les rayons
+        /// </summary>
         private readonly BindingSource bdgRayons = new BindingSource();
+
+        /// <summary>
+        /// Source de données pour les états des exemplaires
+        /// </summary>
         private readonly BindingSource bdgEtats = new BindingSource();
-        private const string confirmation = "Confirmation";
+
+        /// <summary>
+        /// Filtre pour les boîtes de dialogue de fichiers images
+        /// </summary>
         private const string files = "Files|*.jpg;*.bmp;*.jpeg;*.png;*.gif";
+
+        /// <summary>
+        /// Constante pour l'état de commande : Livrée
+        /// </summary>
+        private const string livree = "Livrée";
+
+        /// <summary>
+        /// Constante pour l'état de commande : Réglée
+        /// </summary>
+        private const string reglee = "Réglée";
+
         private const string selection = "Une ligne doit être sélectionnée.";
         private const string erreur = "Erreur";
         private const string numeroErreur = "numéro introuvable";
         private const string info = "Information";
-        private const string livree = "Livrée";
-        private const string reglee = "Réglée";
+        private const string confirmation = "Confirmation";
+
+        /// <summary>
+        /// Instance du contrôleur
+        /// </summary>
         private readonly FrmMediatekController controller;
 
         /// <summary>
-        /// Constructeur : création du contrôleur lié à ce formulaire
+        /// Constructeur : création du contrôleur lié à ce formulaire + gestion des droits selon le service
         /// </summary>
+        /// /// <param name="user">Utilisateur connecté pour les permissions</param>
         internal FrmMediatek(Utilisateur user)
         {
             InitializeComponent();
@@ -45,9 +78,11 @@ namespace MediaTekDocuments.view
             switch (user.IdService)
             {
                 case "00001":
+                    // Administrateur : tous les accès sont ouverts
                     break;
 
                 case "00002":
+                    // Prêts : restriction d'accès
                     tabReceptionRevue.Enabled = false;
                     cbxLivresExemplaireEtat.Enabled = false;
                     btnCommandesLivres.Enabled = false;
@@ -59,6 +94,7 @@ namespace MediaTekDocuments.view
                     break;
 
                 case "00003":
+                    // Culturel : accès bloqués
                     MessageBox.Show("Droits insuffisants pour accéder à l'application.");
                     Application.Exit();
                     break;
@@ -66,7 +102,7 @@ namespace MediaTekDocuments.view
         }
 
         /// <summary>
-        /// Rempli un des 3 combo (genre, public, rayon)
+        /// Rempli un des 3 combo pour filtrer (genre, public, rayon)
         /// </summary>
         /// <param name="lesCategories">liste des objets de type Genre ou Public ou Rayon</param>
         /// <param name="bdg">bindingsource contenant les informations</param>
@@ -76,11 +112,23 @@ namespace MediaTekDocuments.view
             CombotCategorie(lesCategories, bdg, cbx);
         }
 
+        /// <summary>
+        /// Rempli un des 3 combo pour gérer les documents (genre, public, rayon)
+        /// </summary>
+        /// <param name="lesCategories">liste des objets de type Genre ou Public ou Rayon</param>
+        /// <param name="bdg">bindingsource contenant les informations</param>
+        /// <param name="cbx">combobox à remplir</param>
         public void RemplirComboEditCategorie(List<Categorie> lesCategories, BindingSource bdg, ComboBox cbx)
         {
             CombotCategorie(lesCategories, bdg, cbx);
         }
 
+        /// <summary>
+        /// Méthode qui lie une liste de catégories et un ComboBox via un BindingSource
+        /// </summary>
+        /// <param name="lesCategories">liste des objets de type Genre ou Public ou Rayon</param>
+        /// <param name="bdg">bindingsource contenant les informations</param>
+        /// <param name="cbx">>combobox à remplir</param>
         public void CombotCategorie(List<Categorie> lesCategories, BindingSource bdg, ComboBox cbx)
         {
             bdg.DataSource = lesCategories;
@@ -95,8 +143,19 @@ namespace MediaTekDocuments.view
 
         #region Onglet Livres
 
+        /// <summary>
+        /// Source de données pour la liste des livres
+        /// </summary>
         private readonly BindingSource bdgLivresListe = new BindingSource();
-        private List<Livre> lesLivres = new List<Livre>();        
+
+        /// <summary>
+        /// liste des livres récupérés depuis la bdd
+        /// </summary>
+        private List<Livre> lesLivres = new List<Livre>();
+
+        /// <summary>
+        /// Énumération des états possibles pour gérer les livres (Consultation par défaut)
+        /// </summary>
         enum EtatLivre
         {
             Consultation,
@@ -121,6 +180,8 @@ namespace MediaTekDocuments.view
             txbLivresRayon.Text = livre.Rayon;
             txbLivresTitre.Text = livre.Titre;
             string image = livre.Image;
+
+            // si le fichier n'existe pas ou s'il y a un problème, l'image ne se charge pas
             try
             {
                 pcbLivresImage.Image = Image.FromFile(image);
@@ -131,18 +192,31 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton d'ajout, affichage interface pour la saisie d'un nouveau livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresAjoutDocument_Click(object sender, EventArgs e)
         {
+            // chargement des catégories pour la saisie
             cbxLivresGenreAddEdit.DataSource = controller.GetAllGenres();
             cbxLivresPublicAddEdit.DataSource = controller.GetAllPublics();
             cbxLivresRayonAddEdit.DataSource = controller.GetAllRayons();
 
+            // bascule l'interface en mode "Ajout"
             SetEtatLivre(EtatLivre.Ajout);
             VideLivresInfos();
 
+            // Génère un nouvel id
             txbLivresNumero.Text = controller.GenerateNewLivresId();
         }
 
+        /// <summary>
+        /// Sur le clic du le bouton annuler, interface en mode consultation après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresAnnulerDocument_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Voulez-vous vraiment annuler ?", confirmation, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -181,6 +255,11 @@ namespace MediaTekDocuments.view
             RemplirLivresListeComplete();
         }
 
+        /// <summary>
+        /// Recherche image sur disque
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivreSearchImage_Click(object sender, EventArgs e)
         {
             string filePath = "";
@@ -204,20 +283,29 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton de modification : prépare l'interface avec les données du livre sélectionné
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresModifDocument_Click(object sender, EventArgs e)
         {
+            // vérifie si un livre est bien sélectionné dans la grille
             if (dgvLivresListe.SelectedRows.Count > 0)
             {
                 Livre livre = (Livre)bdgLivresListe.List[bdgLivresListe.Position];
+
+                // charge la liste des catégories
                 cbxLivresGenreAddEdit.DataSource = controller.GetAllGenres();
                 cbxLivresPublicAddEdit.DataSource = controller.GetAllPublics();
                 cbxLivresRayonAddEdit.DataSource = controller.GetAllRayons();
 
+                // les catégories sont présélectionnées dans les combobox
                 cbxLivresGenreAddEdit.SelectedIndex = cbxLivresGenreAddEdit.FindStringExact(livre.Genre);
                 cbxLivresPublicAddEdit.SelectedIndex = cbxLivresPublicAddEdit.FindStringExact(livre.Public);
                 cbxLivresRayonAddEdit.SelectedIndex = cbxLivresRayonAddEdit.FindStringExact(livre.Rayon);
 
-
+                // bascule l'interface en mode "Modification"
                 SetEtatLivre(EtatLivre.Modification);
 
                 txbLivresAuteur.Text = livre.Auteur;
@@ -265,17 +353,25 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresSaveDocument_Click(object sender, EventArgs e)
         {
+            // vérifie que les champs obligatoires ne sont pas vides
             if (string.IsNullOrWhiteSpace(txbLivresTitre.Text) || cbxLivresGenreAddEdit.SelectedItem == null ||
                 cbxLivresPublicAddEdit.SelectedItem == null || cbxLivresRayonAddEdit.SelectedItem == null)
             { MessageBox.Show("Tous les champs doivent être remplis.", info); return;
             }
 
+            // récupère les catégories sélectionnées dans les combobox
             Genre genre = (Genre)cbxLivresGenreAddEdit.SelectedItem;
             Public lePublic = (Public)cbxLivresPublicAddEdit.SelectedItem;
             Rayon rayon = (Rayon)cbxLivresRayonAddEdit.SelectedItem;
 
+            // instance le nouveau livre avec les données du formulaire
             Livre livre = new Livre(
                 txbLivresNumero.Text,
                 txbLivresTitre.Text,
@@ -290,6 +386,7 @@ namespace MediaTekDocuments.view
 
             bool operationOk = false;
 
+            // contrôleur appelé pour sauvegarder en BDD selon l'état actuel (Ajout ou Modif)
             try
             {
                 if (etatLivre == EtatLivre.Ajout)
@@ -311,6 +408,7 @@ namespace MediaTekDocuments.view
                 return;
             }
 
+            // rafraichit la liste locale et bascule en mode "Consultation"
             if (operationOk)
             {
                 lesLivres = controller.GetAllLivres();
@@ -319,6 +417,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Suppression : supprime le livre sélectionné après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresSuppDocument_Click(object sender, EventArgs e)
         {
             if (dgvLivresListe.SelectedRows.Count > 0)
@@ -327,7 +430,7 @@ namespace MediaTekDocuments.view
                 if (MessageBox.Show("Voulez-vous vraiment supprimer " + livre.Titre + " de l'auteur " + 
                     livre.Auteur + " ?", "Confirmation de suppression", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    
+                    // supprime en base de données, recharge la liste
                     controller.DeleteLivre(livre);
                     lesLivres = controller.GetAllLivres();
                     RemplirLivresListeComplete();
@@ -466,6 +569,10 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Modifie l'état de l'interface en fonction du mode (Consultation, Ajout, Modification)
+        /// </summary>
+        /// <param name="etatlivre">Le nouvel état déclenché</param>
         private void SetEtatLivre(EtatLivre etatlivre)
         {
             etatLivre = etatlivre;
@@ -502,7 +609,7 @@ namespace MediaTekDocuments.view
         }
 
         /// <summary>
-        /// Remplit le dategrid avec la liste reçue en paramètre
+        /// Remplit le datagrid avec la liste reçue en paramètre
         /// </summary>
         /// <param name="livre">liste de livre</param>
         private void RemplirLivresListe(List<Livre> livre)
@@ -612,8 +719,19 @@ namespace MediaTekDocuments.view
 
         #region Onglet Dvd
 
+        /// <summary>
+        /// Source de données pour la liste des DVD
+        /// </summary>
         private readonly BindingSource bdgDvdListe = new BindingSource();
+
+        /// <summary>
+        /// liste des dvd récupérés depuis la bdd
+        /// </summary>
         private List<Dvd> lesDvd = new List<Dvd>();
+
+        /// <summary>
+        /// Énumération des états possibles pour gérer les dvd (Consultation par défaut)
+        /// </summary>
         enum EtatDvd
         {
             Consultation,
@@ -648,6 +766,10 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Modifie l'état de l'interface en fonction du mode (Consultation, Ajout, Modification)
+        /// </summary>
+        /// <param name="etatdvd">Le nouvel état déclenché</param>
         private void SetEtatDvd(EtatDvd etatdvd)
         {
             etatDvd = etatdvd;
@@ -683,6 +805,11 @@ namespace MediaTekDocuments.view
                 "Informations détaillées";
         }
 
+        /// <summary>
+        /// Sur le clic du bouton d'ajout, affichage interface pour la saisie d'un nouveau DVD
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDVDAjoutDocument_Click(object sender, EventArgs e)
         {
             cbxDvdGenreAddEdit.DataSource = controller.GetAllGenres();
@@ -695,6 +822,11 @@ namespace MediaTekDocuments.view
             txbDvdNumero.Text = controller.GenerateNewDvdId();
         }
 
+        /// <summary>
+        /// Sur le clic du le bouton annuler, interface en mode consultation après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDVDAnnulerDocument_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Voulez-vous vraiment annuler ?", confirmation, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -733,6 +865,11 @@ namespace MediaTekDocuments.view
             RemplirDvdListeComplete();
         }
 
+        /// <summary>
+        /// Sur le clic du bouton de modification : prépare l'interface avec les données du dvd sélectionné
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDVDModifDocument_Click(object sender, EventArgs e)
         {
             if (dgvDvdListe.SelectedRows.Count > 0)
@@ -794,6 +931,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDVDSaveDocument_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txbDvdTitre.Text) ||
@@ -858,7 +1000,11 @@ namespace MediaTekDocuments.view
                 SetEtatDvd(EtatDvd.Consultation);
             }
         }
-
+        /// <summary>
+        /// Recherche image sur disque
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDVDSearchImage_Click(object sender, EventArgs e)
         {
             string filePath = "";
@@ -882,6 +1028,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Suppression : supprime le dvd sélectionné après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDVDSuppDocument_Click(object sender, EventArgs e)
         {
             if (dgvDvdListe.SelectedRows.Count > 0)
@@ -1138,8 +1289,19 @@ namespace MediaTekDocuments.view
 
         #region Onglet Revues
 
+        /// <summary>
+        /// Source de données pour la liste des revues
+        /// </summary>
         private readonly BindingSource bdgRevuesListe = new BindingSource();
+
+        /// <summary>
+        /// liste des revues récupérées depuis la bdd
+        /// </summary>
         private List<Revue> lesRevues = new List<Revue>();
+
+        /// <summary>
+        /// Énumération des états possibles pour gérer les revues (Consultation par défaut)
+        /// </summary>
         enum EtatRevue
         {
             Consultation,
@@ -1148,6 +1310,10 @@ namespace MediaTekDocuments.view
         }
         private EtatRevue etatRevue = EtatRevue.Consultation;
 
+        /// <summary>
+        /// Modifie l'état de l'interface en fonction du mode (Consultation, Ajout, Modification)
+        /// </summary>
+        /// <param name="etat">Le nouvel état déclenché</param>
         private void SetEtatRevue(EtatRevue etat)
         {
             etatRevue = etat;
@@ -1205,6 +1371,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton d'ajout, affichage interface pour la saisie d'une nouvelle revue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesAjoutDocument_Click(object sender, EventArgs e)
         {
             cbxRevuesGenreAddEdit.DataSource = controller.GetAllGenres();
@@ -1218,6 +1389,11 @@ namespace MediaTekDocuments.view
 
         }
 
+        /// <summary>
+        /// Sur le clic du le bouton annuler, interface en mode consultation après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesAnnulerDocument_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Voulez-vous vraiment annuler ?", confirmation, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -1256,6 +1432,11 @@ namespace MediaTekDocuments.view
             RemplirRevuesListeComplete();
         }
 
+        /// <summary>
+        /// Recherche image sur disque
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevueSearchImage_Click(object sender, EventArgs e)
         {
             string filePath = "";
@@ -1279,6 +1460,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton de modification : prépare l'interface avec les données de la revue sélectionnée
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesModifDocument_Click(object sender, EventArgs e)
         {
             if (dgvRevuesListe.SelectedRows.Count > 0)
@@ -1338,6 +1524,12 @@ namespace MediaTekDocuments.view
                 RemplirRevuesListeComplete();
             }
         }
+
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesSaveDocument_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txbRevuesTitre.Text) ||
@@ -1394,6 +1586,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Suppression : supprime la revue sélectionnée après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesSuppDocument_Click(object sender, EventArgs e)
         {
             if (dgvRevuesListe.SelectedRows.Count > 0)
@@ -1641,15 +1838,42 @@ namespace MediaTekDocuments.view
 
         private const string ETATNEUF = "00001";
 
+        /// <summary>
+        /// Source de données pour la liste de parutions d'une revue
+        /// </summary>
         private readonly BindingSource bdgExemplairesRevuesListe = new BindingSource();
+
+        /// <summary>
+        /// Source de données pour la liste des exemplaires d'un livre
+        /// </summary>
         private readonly BindingSource bdgExemplairesLivresListe = new BindingSource();
+
+        /// <summary>
+        /// Source de données pour la liste des exemplaires d'un dvd
+        /// </summary>
         private readonly BindingSource bdgExemplairesDvdListe = new BindingSource();
 
-
+        /// <summary>
+        /// liste des exemplaires d'une revue récupérés depuis la bdd
+        /// </summary>
         private List<Exemplaire> lesExemplairesRevues = new List<Exemplaire>();
+
+        /// <summary>
+        /// liste des exemplaires d'un livre récupérés depuis la bdd
+        /// </summary>
         private List<Exemplaire> lesExemplairesLivres = new List<Exemplaire>();
+
+        /// <summary>
+        /// liste des exemplaires d'un dvd récupérés depuis la bdd
+        /// </summary>
         private List<Exemplaire> lesExemplairesDvd = new List<Exemplaire>();
 
+        /// <summary>
+        /// Remplit le datagrid avec la liste reçue en paramètre
+        /// </summary>
+        /// <param name="dgv">le datagrid concerné</param>
+        /// <param name="bdg">la source de données concernée</param>        
+        /// <param name="exemplaires">liste d'exemplaires</param>
         private void RemplirListeExemplaires(DataGridView dgv, BindingSource bdg, List<Exemplaire> exemplaires)
         {
             bdg.DataSource = exemplaires;
@@ -1666,6 +1890,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SauvegarderEtatExemplaire(BindingSource bdg, ComboBox cbx)
         {
             Exemplaire exemplaire = (Exemplaire)bdg.Current;
@@ -1878,11 +2107,21 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesExemplairesSaveEtat_Click(object sender, EventArgs e)
         {
              SauvegarderEtatExemplaire(bdgExemplairesRevuesListe, cbxRevuesExemplaireEtat);
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Suppression : supprime la parution de la revue sélectionnée après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnRevuesExemplairesSupp_Click(object sender, EventArgs e)
         {
             if (dgvReceptionExemplairesListe.CurrentRow != null)
@@ -1926,12 +2165,23 @@ namespace MediaTekDocuments.view
         #endregion
 
         #region livres exemplaires
+
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresExemplairesSaveEtat_Click(object sender, EventArgs e)
         {
             SauvegarderEtatExemplaire(bdgExemplairesLivresListe, cbxLivresExemplaireEtat);
 
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Suppression : supprime l'exemplaire du livre sélectionné après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnLivresExemplairesSupp_Click(object sender, EventArgs e)
         {
             if (dgvExemplaireLivresListe.CurrentRow != null)
@@ -1944,6 +2194,11 @@ namespace MediaTekDocuments.view
             }
         }
 
+        /// <summary>
+        /// Tri sur les colonnes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dgvExemplaireLivresListe_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             string titreColonne = dgvExemplaireLivresListe.Columns[e.ColumnIndex].HeaderText;
@@ -1962,7 +2217,10 @@ namespace MediaTekDocuments.view
             RemplirListeExemplaires(dgvExemplaireLivresListe, bdgExemplairesLivresListe, sortedList);
         }
 
-
+        /// <summary>
+        /// Affichage des informations des exemplaires du livre sélectionné
+        /// </summary>
+        /// <param name="livre">le livre</param>
         private void AfficheExemplairesLivres(Livre livre)
         {
             string idDocument = livre.Id;
@@ -1974,12 +2232,22 @@ namespace MediaTekDocuments.view
 
         #region dvd exemplaires
 
+        /// <summary>
+        /// Sur le clic du bouton Enregistrer : enregistre les modifications (Ajout ou Modification) en bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDvdExemplairesSaveEtat_Click(object sender, EventArgs e)
         {
             SauvegarderEtatExemplaire(bdgExemplairesDvdListe, cbxDvdExemplaireEtat);
 
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Suppression : supprime l'exemplaire du dvd sélectionné après confirmation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDvdExemplairesSupp_Click(object sender, EventArgs e)
         {
             if (dgvExemplaireDvdListe.CurrentRow != null)
@@ -1991,7 +2259,13 @@ namespace MediaTekDocuments.view
                 }
             }
 
-        }        
+        }
+
+        /// <summary>
+        /// Tri sur les colonnes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dgvExemplaireDvdListe_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             string titreColonne = dgvExemplaireDvdListe.Columns[e.ColumnIndex].HeaderText;
@@ -2010,6 +2284,10 @@ namespace MediaTekDocuments.view
             RemplirListeExemplaires(dgvExemplaireDvdListe, bdgExemplairesDvdListe, sortedList);
         }
 
+        /// <summary>
+        /// Affichage des informations des exemplaires du dvd sélectionné
+        /// </summary>
+        /// <param name="dvd">le dvd</param>
         private void AfficheExemplairesDvd(Dvd dvd)
         {
             string idDocument = dvd.Id;
@@ -2020,6 +2298,12 @@ namespace MediaTekDocuments.view
         #endregion
         #endregion Onglet Parutions
 
+
+        /// <summary>
+        /// Sur le clic du bouton Commander un exemplaire: ouvre la fenêtre de gestion des commandes sur l'onglet Livres avec le livre sélectionné
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCommandesLivres_Click(object sender, EventArgs e)
         {
             string idLivre = (bdgLivresListe.Current != null) ? ((Livre)bdgLivresListe.Current).Id : null;
@@ -2028,6 +2312,11 @@ namespace MediaTekDocuments.view
             frm.ShowDialog();
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Commander un exemplaire: ouvre la fenêtre de gestion des commandes sur l'onglet Dvd avec le dvd sélectionné
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCommandesDvd_Click(object sender, EventArgs e)
         {
             string idDvd = (bdgDvdListe.Current != null) ? ((Dvd)bdgDvdListe.Current).Id : null;
@@ -2036,6 +2325,11 @@ namespace MediaTekDocuments.view
             frm.ShowDialog();
         }
 
+        /// <summary>
+        /// Sur le clic du bouton Commander un abonnement: ouvre la fenêtre de gestion des commandes sur l'onglet Revues avec la revue sélectionnée
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCommandesRevues_Click(object sender, EventArgs e)
         {
             string idRevue = (bdgRevuesListe.Current != null) ? ((Revue)bdgRevuesListe.Current).Id : null;

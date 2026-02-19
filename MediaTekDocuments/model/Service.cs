@@ -1,5 +1,8 @@
 ﻿namespace MediaTekDocuments.model
 {
+    /// <summary>
+    /// Classe métier Service (habilitation des utilisateurs)
+    /// </summary>
     public class Service
     {
         public string Id { get; }

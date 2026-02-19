@@ -3,6 +3,9 @@ using System.ComponentModel;
 
 namespace MediaTekDocuments.model
 {
+    /// <summary>
+    /// Classe métier CommandeDocument hérite de Commande : contient des propriétés spécifiques aux commandes de documents (Dvd, livres)
+    /// </summary>
     public class CommandeDocument : Commande
     {
         public int NbExemplaire { get; }

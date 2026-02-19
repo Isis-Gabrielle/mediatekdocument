@@ -1902,7 +1902,7 @@ namespace MediaTekDocuments.view
             this.btnCommandesRevues.Name = "btnCommandesRevues";
             this.btnCommandesRevues.Size = new System.Drawing.Size(253, 27);
             this.btnCommandesRevues.TabIndex = 26;
-            this.btnCommandesRevues.Text = "Commander un exemplaire";
+            this.btnCommandesRevues.Text = "Commander un abonnement";
             this.btnCommandesRevues.UseVisualStyleBackColor = true;
             this.btnCommandesRevues.Click += new System.EventHandler(this.btnCommandesRevues_Click);
             // 

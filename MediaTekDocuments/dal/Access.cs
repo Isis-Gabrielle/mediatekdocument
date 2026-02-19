@@ -20,12 +20,39 @@ namespace MediaTekDocuments.dal
     /// </summary>
     public class Access
     {
+        // CONFIGURATION
+        
         /// <summary>
-        /// adresse de l'API
+        /// clé de configuration pour l'adresse de l'API
         /// </summary>
         private static readonly string uriApi = "MediaTekDocuments.Properties.Settings.apiConnectionString";
-
+        /// <summary>
+        /// clé de configuration pour l'adresse de l'authentification
+        /// </summary>
         private static readonly string connectionName = "mediatekDocuments.Properties.Settings.mediatekDocumentsConnectionString";
+
+        // Constantes pour requêtes http
+
+        /// <summary>
+        /// méthode HTTP pour select
+        /// </summary>
+        private const string GET = "GET";
+        /// <summary>
+        /// méthode HTTP pour insert
+        /// </summary>
+        private const string POST = "POST";
+        /// <summary>
+        /// méthode HTTP pour update
+        /// </summary>
+        private const string PUT = "PUT";
+        /// <summary>
+        /// méthode HTTP pour delete
+        /// </summary>
+        private const string DELETE = "DELETE";
+        /// <summary>
+        /// préfixe pour requête
+        /// </summary>
+        private const string champs = "champs=";
 
         /// <summary>
         /// instance unique de la classe
@@ -38,24 +65,6 @@ namespace MediaTekDocuments.dal
         private readonly ApiRest api = null;
 
         /// <summary>
-        /// méthode HTTP pour select
-        /// </summary>
-        private const string GET = "GET";
-
-        /// <summary>
-        /// méthode HTTP pour insert
-        /// </summary>
-        private const string POST = "POST";
-
-        /// <summary>
-        /// méthode HTTP pour update
-        private const string PUT = "PUT";
-
-        private const string DELETE = "DELETE";
-
-        private const string champs = "champs=";
-
-        /// <summary>
         /// Méthode privée pour créer un singleton
         /// initialise l'accès à l'API
         /// </summary>
@@ -65,28 +74,37 @@ namespace MediaTekDocuments.dal
             String apiString;
             try
             {
+                // configuration du système de logs
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Verbose()
                     .WriteTo.Console()
                     .WriteTo.File("logs/log.txt")
                     .CreateLogger();
 
+                // récupération des chaînes de connexion dans le fichier App.config
                 authenticationString = GetConnectionStringByName(connectionName);
                 apiString = GetConnectionStringByName(uriApi);
-                api = ApiRest.GetInstance(apiString, authenticationString);
-                
+
+                // initialisation d'API REST
+                api = ApiRest.GetInstance(apiString, authenticationString);     
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                Log.Fatal("Access.Access : Erreur critique d'initialisation. Connexion={0}, Erreur={1}", connectionName, e.Message);
-                
+                Log.Fatal("Access.Access : Erreur critique d'initialisation. Connexion={0}, Erreur={1}", connectionName, e.Message); 
                 Environment.Exit(0);
             }
         }
+
+        /// <summary>
+        /// Récupère une chaîne de connexion par son nom dans le fichier de configuration
+        /// </summary>
+        /// <param name="name">Nom de la chaîne de connexion</param>
+        /// <returns>La chaîne de connexion</returns>
         static string GetConnectionStringByName(string name)
         {
             string returnValue = null;
+            // Cherche dans le fichier App.config pour trouver la bonne chaîne
             ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings[name];
             if (settings != null)
                 returnValue = settings.ConnectionString;
@@ -106,8 +124,16 @@ namespace MediaTekDocuments.dal
             return instance;
         }
 
+        #region AUTH
+        /// <summary>
+        /// Tente de connecter un utilisateur
+        /// </summary>
+        /// <param name="email">Email de l'utilisateur</param>
+        /// <param name="password">Mot de passe</param>
+        /// <returns>Objet Utilisateur</returns>
         public Utilisateur Login(string email, string password)
         {
+            // créé un dictionnaire avec les identifiants
             Dictionary<string, object> loginData = new Dictionary<string, object> {
         { "email", email },
         { "password", password }};
@@ -116,7 +142,6 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<Utilisateur> liste = TraitementRecup<Utilisateur>(GET, "utilisateur/" + jsonLogin, null);
-
                 return (liste != null && liste.Count > 0) ? liste[0] : null;
             }
             catch (Exception e)
@@ -126,6 +151,8 @@ namespace MediaTekDocuments.dal
                 return null;
             }
         }
+        #endregion
+
         #region GET
 
         /// <summary>
@@ -188,12 +215,20 @@ namespace MediaTekDocuments.dal
             return lesRevues;
         }
 
+        /// <summary>
+        /// Retourne tous les abonnements à partir de la BDD
+        /// </summary>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetAllAbonnements()
         {
             List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement", null);
             return lesAbonnements;
         }
 
+        /// <summary>
+        /// Retourne toutes les commandes à partir de la BDD
+        /// </summary>
+        /// <returns>Liste d'objets Commande</returns>
         public List<Commande> GetAllCommandes()
         {
             List<Commande> lesCommandes = TraitementRecup<Commande>(GET, "commande", null);
@@ -212,6 +247,11 @@ namespace MediaTekDocuments.dal
             return lesExemplaires;
         }
 
+        /// <summary>
+        /// Retourne les commandes d'un document (Livre ou DVD)
+        /// </summary>
+        /// <param name="idDocument">id du document concerné</param>
+        /// <returns>Liste d'objets CommandeDocument</returns>
         public List<CommandeDocument> GetCommandesDocument(string idDocument)
         {
             String jsonIdDocument = convertToJson("id", idDocument);
@@ -219,18 +259,31 @@ namespace MediaTekDocuments.dal
             return lesCommandes;
         }
 
+        /// <summary>
+        /// Retourne tous les états de suivi de commande
+        /// </summary>
+        /// <returns>Liste d'objets Suivi</returns>
         public List<Suivi> GetAllSuivi()
         {
             IEnumerable<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
             return new List<Suivi>(lesSuivis);
         }
 
+        /// <summary>
+        /// Retourne tous les états possibles d'un exemplaire
+        /// </summary>
+        /// <returns>Liste d'objets Etat</returns>
         public List<Etat> GetAllEtats()
         {
             IEnumerable<Etat> lesEtats = TraitementRecup<Etat>(GET, "etat", null);
             return new List<Etat>(lesEtats);
         }
 
+        /// <summary>
+        /// Retourne les abonnements d'une revue
+        /// </summary>
+        /// <param name="idDocument">id de la revue</param>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetAbonnements(string idDocument)
         {
             String jsonIdDocument = convertToJson("id", idDocument);
@@ -243,10 +296,34 @@ namespace MediaTekDocuments.dal
         #endregion GET
 
         #region DELETE
+
+        /// <summary>
+        /// Supprime un livre de la BDD
+        /// </summary>
+        /// <param name="livre">Objet Livre à supprimer</param>
+        /// <returns>True si la suppression est réussie</returns>
         public bool DeleteLivre(Livre livre) => SupprimerDocument("livre", livre.Id);
+
+        /// <summary>
+        /// Supprime un DVD de la BDD
+        /// </summary>
+        /// <param name="dvd">Objet Dvd à supprimer</param>
+        /// <returns>True si la suppression est réussie</returns>
         public bool DeleteDvd(Dvd dvd) => SupprimerDocument("dvd", dvd.Id);
+
+        /// <summary>
+        /// Supprime une revue de la BDD
+        /// </summary>
+        /// <param name="revue">Objet Revue à supprimer</param>
+        /// <returns>True si la suppression est réussie</returns>
         public bool DeleteRevue(Revue revue) => SupprimerDocument("revue", revue.Id);
 
+        /// <summary>
+        /// Méthode générique de suppression de document + vérification des exemplaires
+        /// </summary>
+        /// <param name="table">Nom de la table</param>
+        /// <param name="id">id du document</param>
+        /// <returns>True si succès, false si exemplaires rattachés</returns>
         private bool SupprimerDocument(string table, string id)
         {
             // Vérification des exemplaires avant suppression
@@ -271,6 +348,12 @@ namespace MediaTekDocuments.dal
                 return false;
             }
         }
+
+        /// <summary>
+        /// Supprime une commande de la BDD
+        /// </summary>
+        /// <param name="commande">Objet Commande à supprimer</param>
+        /// <returns>True si la suppression est réussie</returns>
         public bool DeleteCommande(Commande commande)
         {
             try
@@ -287,10 +370,16 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        /// Supprime un exemplaire de la BDD
+        /// </summary>
+        /// <param name="exemplaire">Objet Exemplaire à supprimer</param>
+        /// <returns>True si la suppression est réussie</returns>
         public bool DeleteExemplaire(Exemplaire exemplaire)
         {
             try
             {
+                // créé un objet anonyme, envoie uniquement les propriétés nécessaires
                 var idData = new
                 {
                     id = exemplaire.Id,
@@ -334,10 +423,16 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        ///ecriture d'un livre en base de données
+        /// </summary>
+        /// <param name="livre">Objet Livre à insérer</param>
+        /// <returns>true si l'insertion a pu se faire</returns>
         public bool AddLivre(Livre livre)
         {
             try
             {
+                // créé un objet anonyme, envoie uniquement les propriétés nécessaires
                 var livreData = new
                 {
                     id = livre.Id,
@@ -362,6 +457,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        ///ecriture d'une commande de document en base de données
+        /// </summary>
+        /// <param name="commande">Objet CommandeDocument à insérer</param>
+        /// <returns>true si l'insertion a pu se faire</returns>
         public bool CreerCommandeDocument(CommandeDocument commande)
         {
             try
@@ -386,7 +486,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
-
+        /// <summary>
+        ///ecriture d'une revue en base de données
+        /// </summary>
+        /// <param name="revue">Objet Revue à insérer</param>
+        /// <returns>true si l'insertion a pu se faire</returns>
         public bool AddRevue(Revue revue)
         {
             try
@@ -414,6 +518,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        ///ecriture d'un DVD en base de données
+        /// </summary>
+        /// <param name="dvd">Objet Dvd à insérer</param>
+        /// <returns>true si l'insertion a pu se faire</returns>
         public bool AddDVD(Dvd dvd)
         {
             try
@@ -443,6 +552,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        ///ecriture d'un abonnement en base de données
+        /// </summary>
+        /// <param name="abonnement">Objet Abonnement à insérer</param>
+        /// <returns>true si l'insertion a pu se faire</returns>
         public bool CreerAbonnement(Abonnement abonnement)
         {
             try
@@ -470,6 +584,12 @@ namespace MediaTekDocuments.dal
         #endregion POST
 
         #region PUT
+
+        /// <summary>
+        /// modifie les informations d'un livre
+        /// </summary>
+        /// <param name="livre">Objet Livre modifié</param>
+        /// <returns>true si la modification a pu se faire</returns>
         public bool EditLivre(Livre livre)
         {
             try
@@ -498,6 +618,11 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        /// modifie les informations d'un dvd
+        /// </summary>
+        /// <param name="dvd">Objet Dvd modifié</param>
+        /// <returns>true si la modification a pu se faire</returns>
         public bool EditDvd(Dvd dvd)
         {
             try
@@ -524,7 +649,11 @@ namespace MediaTekDocuments.dal
                 return false; }
         }
 
-
+        /// <summary>
+        /// modifie les informations d'une revue
+        /// </summary>
+        /// <param name="revue">Objet Revue modifié</param>
+        /// <returns>true si la modification a pu se faire</returns>
         public bool EditRevue(Revue revue)
         {
             try
@@ -549,6 +678,13 @@ namespace MediaTekDocuments.dal
                 Log.Error("Access.EditRevue catch request {0} on {1} erreur={2}", PUT, "revue/", ex.Message); 
                 return false; }
         }
+
+        /// <summary>
+        /// modifie l'état de suivi d'une commande
+        /// </summary>
+        /// <param name="idCommande">id de la commande</param>
+        /// <param name="idSuivi">nouvel id de suivi</param>
+        /// <returns>true si la modification a pu se faire</returns>
         public bool EditSuiviCommande(string idCommande, string idSuivi)
         {
             try
@@ -570,6 +706,13 @@ namespace MediaTekDocuments.dal
             }
         }
 
+        /// <summary>
+        /// modifie l'état d'un exemplaire
+        /// </summary>
+        /// <param name="idDocument">id du document</param>
+        /// <param name="numero">numéro de l'exemplaire</param>
+        /// <param name="idEtat">nouvel état de l'exemplaire</param>
+        /// <returns>true si la modification a pu se faire</returns>
         public bool EditExemplaireEtat(string idDocument, int numero, string idEtat)
         {
             try
