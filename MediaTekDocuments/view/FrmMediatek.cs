@@ -2143,25 +2143,6 @@ namespace MediaTekDocuments.view
             lesRevues = controller.GetAllRevues();
             txbReceptionRevueNumero.Text = "";
         }
-        /// <summary>
-        /// Si le numéro de revue est modifié, la zone de l'exemplaire est vidée et inactive
-        /// les informations de la revue son aussi effacées
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void txbReceptionRevueNumero_TextChanged(object sender, EventArgs e)
-        {
-            txbReceptionRevuePeriodicite.Text = "";
-            txbReceptionRevueImage.Text = "";
-            txbReceptionRevueDelaiMiseADispo.Text = "";
-            txbReceptionRevueGenre.Text = "";
-            txbReceptionRevuePublic.Text = "";
-            txbReceptionRevueRayon.Text = "";
-            txbReceptionRevueTitre.Text = "";
-            pcbReceptionRevueImage.Image = null;
-            RemplirListeExemplaires(null, null, null);
-            AccesReceptionExemplaireGroupBox(false);
-        }
         #endregion
 
         #region livres exemplaires
