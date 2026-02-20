@@ -2464,7 +2464,6 @@ namespace MediaTekDocuments.view
             this.txbReceptionRevueNumero.Name = "txbReceptionRevueNumero";
             this.txbReceptionRevueNumero.Size = new System.Drawing.Size(132, 22);
             this.txbReceptionRevueNumero.TabIndex = 43;
-            this.txbReceptionRevueNumero.TextChanged += new System.EventHandler(this.txbReceptionRevueNumero_TextChanged);
             // 
             // label3
             // 
