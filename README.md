@@ -11,8 +11,8 @@ L'application a été enrichie. Voici les fonctionnalités qui ont été ajouté
 <img width="592" height="521" alt="3 drawio" src="https://github.com/user-attachments/assets/f4c8a495-a571-4d50-a44e-cc3f727c3da9" /><br>
 -Affichage, modification, ajout et suppression des commandes/abonnements des documents.<br>
 <img width="592" height="521" alt="2 drawio" src="https://github.com/user-attachments/assets/45ede245-9cfd-487b-87aa-dbd43879de2f" /><br>
--Système d'authentification
-<img width="479" height="401" alt="4 drawio" src="https://github.com/user-attachments/assets/9ccdcb93-5641-4c3c-9087-b2387baea817" />
+-Système d'authentification<br>
+<img width="479" height="401" alt="4 drawio" src="https://github.com/user-attachments/assets/9ccdcb93-5641-4c3c-9087-b2387baea817" /><br>
 <br>L'application comporte plusieurs fenêtres de gestions divisée en plusieurs onglets dont une fenêtre d'authentification.
 # Fenêtre de gestion des documents et des exemplaires
 ## Les différents onglets
