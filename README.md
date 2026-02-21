@@ -86,6 +86,9 @@ Le code de l'API se trouve ici :<br>
 https://github.com/Isis-Gabrielle/api_mediatekdocuments<br>
 avec toutes les explications pour l'utiliser (dans le readme).
 
+## Accès à la documentation technique
+Pour accéder à la documentation technique de l'application en local, elle est accessible en ouvrant le fichier index.html dans le dossier documentation, qui se trouve dans le projet MediatekDocuments.
+
 ## Installation de l'application en local
 - Télécharger le code et le dézipper puis renommer le dossier en "mediatekdocuments".<br>
 - Récupérer et installer l'API REST nécessaire (https://github.com/Isis-Gabrielle/api_mediatekdocuments) ainsi que la base de données (les explications sont données dans le readme correspondant).
