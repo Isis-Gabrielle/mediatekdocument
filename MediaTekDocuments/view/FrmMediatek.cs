@@ -365,12 +365,10 @@ namespace MediaTekDocuments.view
                 cbxLivresPublicAddEdit.SelectedItem == null || cbxLivresRayonAddEdit.SelectedItem == null)
             { MessageBox.Show("Tous les champs doivent être remplis.", info); return;
             }
-
             // récupère les catégories sélectionnées dans les combobox
             Genre genre = (Genre)cbxLivresGenreAddEdit.SelectedItem;
             Public lePublic = (Public)cbxLivresPublicAddEdit.SelectedItem;
             Rayon rayon = (Rayon)cbxLivresRayonAddEdit.SelectedItem;
-
             // instance le nouveau livre avec les données du formulaire
             Livre livre = new Livre(
                 txbLivresNumero.Text,
@@ -383,9 +381,7 @@ namespace MediaTekDocuments.view
                 lePublic.Id, lePublic.Libelle,
                 rayon.Id, rayon.Libelle
             );
-
             bool operationOk = false;
-
             // contrôleur appelé pour sauvegarder en BDD selon l'état actuel (Ajout ou Modif)
             try
             {
@@ -407,7 +403,6 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Une erreur inattendue est survenue : " + ex.Message, erreur);
                 return;
             }
-
             // rafraichit la liste locale et bascule en mode "Consultation"
             if (operationOk)
             {
