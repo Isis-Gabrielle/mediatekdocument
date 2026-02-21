@@ -4,16 +4,15 @@ L'application exploite une API REST pour accéder à la BDD MySQL. Des explicati
 L'application se repose sur l'existant dont le dépôt initial se trouve ici et contient les informations sur le code existant:
 https://github.com/CNED-SLAM/MediaTekDocuments
 ## Présentation
-L'application a été enrichie. Voici les fonctionnalités qui ont été ajoutées et qui sont opérationnelles :
+L'application a été enrichie. Voici les fonctionnalités qui ont été ajoutées et qui sont opérationnelles :<br>
 -Ajout, suppression et modification des documents de la médiathèque (livres, DVD, revues).<br>
-<img width="592" height="521" alt="diagramme1" src="https://github.com/user-attachments/assets/e3b88274-ceec-4200-a6c6-280675a14332" />
+<img width="592" height="521" alt="diagramme1" src="https://github.com/user-attachments/assets/e3b88274-ceec-4200-a6c6-280675a14332" /><br>
 -Affichage, modification et suppression des exemplaires physiques des documents.<br>
-<img width="592" height="521" alt="3 drawio" src="https://github.com/user-attachments/assets/f4c8a495-a571-4d50-a44e-cc3f727c3da9" />
+<img width="592" height="521" alt="3 drawio" src="https://github.com/user-attachments/assets/f4c8a495-a571-4d50-a44e-cc3f727c3da9" /><br>
 -Affichage, modification, ajout et suppression des commandes/abonnements des documents.<br>
-<img width="592" height="521" alt="2 drawio" src="https://github.com/user-attachments/assets/45ede245-9cfd-487b-87aa-dbd43879de2f" />
+<img width="592" height="521" alt="2 drawio" src="https://github.com/user-attachments/assets/45ede245-9cfd-487b-87aa-dbd43879de2f" /><br>
 -Système d'authentification
 <img width="479" height="401" alt="4 drawio" src="https://github.com/user-attachments/assets/9ccdcb93-5641-4c3c-9087-b2387baea817" />
-
 <br>L'application comporte plusieurs fenêtres de gestions divisée en plusieurs onglets dont une fenêtre d'authentification.
 # Fenêtre de gestion des documents et des exemplaires
 ## Les différents onglets
@@ -53,7 +52,7 @@ Une commande passe par différents stades :
 - au moment de sa réception, elle est "livrée" ;
 - une fois livrée, le paiement est effectué, elle est alors "réglée" ;
 - dans le cas où la livraison tarde, la commande est "relancée" ;
-- <br>
+<br>
 La fenêtre permet de voir, pour les livres, la liste des commandes et gérer le suivi.
 Lorsqu'une commande est "livrée", les exemplaires concernés sont
 automatiquement générés dans la BDD, avec un numéro séquentiel par rapport au document concerné.
