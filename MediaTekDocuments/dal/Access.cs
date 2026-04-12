@@ -409,11 +409,19 @@ namespace MediaTekDocuments.dal
         /// <returns>true si l'insertion a pu se faire (retour != null)</returns>
         public bool CreerExemplaire(Exemplaire exemplaire)
         {
-            String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
             try
             {
-                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", champs + jsonExemplaire);
-                return (liste != null);
+                var exemplaireData = new
+                {
+                    id = exemplaire.Id,
+                    numero = exemplaire.Numero,
+                    dateAchat = exemplaire.DateAchat,
+                    photo = exemplaire.Photo,
+                    idEtat = exemplaire.IdEtat
+                };
+
+                string json = JsonConvert.SerializeObject(exemplaireData, new CustomDateTimeConverter());
+                return TraitementRecup<Exemplaire>(POST, "exemplaire", champs + json) != null;
             }
             catch (Exception ex)
             {
